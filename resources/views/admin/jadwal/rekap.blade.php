@@ -121,8 +121,8 @@
                                         $bobot = \App\Models\JadwalSidang::konversiBobot($ns);
                                         $nilaiMutu = $ns !== null ? number_format($bobot * 6, 2) : '-';
 
-                                        $jumlahMutuMhs = floatval($jadwal->mahasiswa->jumlah_mutu ?? 0);
-                                        $jumlahSksMhs = floatval($jadwal->mahasiswa->jumlah_sks ?? 0);
+                                        $jumlahMutuMhs = floatval(optional($jadwal->mahasiswa)->jumlah_mutu ?? 0);
+                                        $jumlahSksMhs = floatval(optional($jadwal->mahasiswa)->jumlah_sks ?? 0);
                                         $nilaiMutuSidang = $ns !== null ? $bobot * 6 : 0;
                                         $nilaiAkhirAngka = 0;
                                         $mutuAkhirPredikat = '-';
@@ -145,7 +145,7 @@
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
                                             {{ $index + 1 }}</td>
                                         <td class="px-4 py-4 text-sm font-medium text-gray-900 border align-middle">
-                                            {{ $jadwal->mahasiswa->nama }}</td>
+                                            {{ optional($jadwal->mahasiswa)->nama ?? '-' }}</td>
 
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
                                             {{ $npbFormat }}</td>
@@ -169,15 +169,15 @@
                                             class="px-4 py-4 text-sm text-gray-900 border text-center font-bold align-middle bg-green-50">
                                             {{ $nilaiMutu }}</td>
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
-                                            {{ $jadwal->mahasiswa->ipk ?? '-' }}</td>
+                                            {{ optional($jadwal->mahasiswa)->ipk ?? '-' }}</td>
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
-                                            {{ $jadwal->mahasiswa->jumlah_mutu ?? '-' }}</td>
+                                            {{ optional($jadwal->mahasiswa)->jumlah_mutu ?? '-' }}</td>
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
-                                            {{ $jadwal->mahasiswa->jumlah_sks ?? '-' }}</td>
+                                            {{ optional($jadwal->mahasiswa)->jumlah_sks ?? '-' }}</td>
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
-                                            {{ $jadwal->mahasiswa->mata_kuliah_ulang ?? '0' }}</td>
+                                            {{ optional($jadwal->mahasiswa)->mata_kuliah_ulang ?? '0' }}</td>
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
-                                            {{ $jadwal->mahasiswa->semester ?? '-' }}</td>
+                                            {{ optional($jadwal->mahasiswa)->semester ?? '-' }}</td>
                                         <td
                                             class="px-4 py-4 text-sm text-blue-700 border text-center font-bold align-middle bg-cyan-50">
                                             {{ $nilaiAkhirFormat }}</td>
