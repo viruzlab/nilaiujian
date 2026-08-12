@@ -6,7 +6,7 @@ services:
       context: .
       dockerfile: Dockerfile
     image: laravel-app
-    container_name: app
+    container_name: nilai_app
     restart: unless-stopped
     working_dir: /var/www/html
     volumes:
@@ -19,7 +19,7 @@ services:
 
   web:
     image: nginx:alpine
-    container_name: web
+    container_name: nilai_web
     restart: unless-stopped
     ports:
       - "8000:80"
@@ -33,7 +33,7 @@ services:
 
   db:
     image: mysql:8.0
-    container_name: db
+    container_name: nilai_db
     restart: unless-stopped
     environment:
       MYSQL_DATABASE: ${DB_DATABASE:-nilai_ieki}
@@ -41,7 +41,7 @@ services:
     volumes:
       - dbdata:/var/lib/mysql
     ports:
-      - "3306:3306"
+      - "3308:3306"
     networks:
       - app-network
 
