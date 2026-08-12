@@ -17,7 +17,24 @@ class DashboardController extends Controller
         $totalMahasiswa = Mahasiswa::count();
         $totalJadwal = JadwalSidang::count();
 
-        return view('admin.dashboard', compact('totalDosen', 'totalMahasiswa', 'totalJadwal'));
+        // 1. Jumlah mahasiswa yang ujian (Total Jadwal)
+        $jumlahUjian = $totalJadwal;
+
+        // 2. Jumlah mahasiswa yang sudah diberi nilai (Semua penguji sudah memberi nilai)
+        $jadwalSelesaiDinilai = JadwalSidang::whereHas('nilaiSidangs')
+            ->whereDoesntHave('nilaiSidangs', function($query) {
+                $query->whereNull('nilai');
+            })->count();
+
+        // 3. Jumlah/Presentase pengisian nilai
+        $totalTugasMenilai = \App\Models\NilaiSidang::count();
+        $tugasSelesai = \App\Models\NilaiSidang::whereNotNull('nilai')->count();
+        $persentaseNilai = $totalTugasMenilai > 0 ? round(($tugasSelesai / $totalTugasMenilai) * 100) : 0;
+
+        return view('admin.dashboard', compact(
+            'totalDosen', 'totalMahasiswa', 'totalJadwal',
+            'jumlahUjian', 'jadwalSelesaiDinilai', 'totalTugasMenilai', 'tugasSelesai', 'persentaseNilai'
+        ));
     }
 
     public function importJadwal(Request $request)

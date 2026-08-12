@@ -5,8 +5,9 @@
             <div class="flex">
                 <!-- Logo -->
                 <div class="shrink-0 flex items-center">
-                    <a href="{{ route('admin.dashboard') }}" class="text-xl font-bold text-emerald-600">
-                        Sistem Sidang
+                    <a href="{{ route('admin.dashboard') }}" class="flex items-center gap-3 text-xl font-bold text-emerald-600">
+                        <img src="{{ asset('images/logo-ieki.png') }}" class="h-8 w-auto" alt="Logo IEKI">
+                        Sistem Penilaian Ujian Sidang
                     </a>
                 </div>
 
@@ -21,8 +22,11 @@
                     <x-nav-link :href="route('admin.mahasiswa.index')" :active="request()->routeIs('admin.mahasiswa.*')">
                         {{ __('Mahasiswa') }}
                     </x-nav-link>
-                    <x-nav-link :href="route('admin.jadwal.index')" :active="request()->routeIs('admin.jadwal.*')">
+                    <x-nav-link :href="route('admin.jadwal.index')" :active="request()->routeIs('admin.jadwal.*') && !request()->routeIs('admin.jadwal.rekap')">
                         {{ __('Jadwal Sidang') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('admin.jadwal.rekap')" :active="request()->routeIs('admin.jadwal.rekap')">
+                        {{ __('Rekap Nilai') }}
                     </x-nav-link>
                 </div>
             </div>

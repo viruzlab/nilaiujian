@@ -9,7 +9,17 @@ class Mahasiswa extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    protected $fillable = [
+        'nim',
+        'nama',
+        'pembimbing_1_id',
+        'pembimbing_2_id',
+        'jumlah_mutu',
+        'jumlah_sks',
+        'mata_kuliah_ulang',
+        'semester',
+        'ipk'
+    ];
 
     public function jadwalSidangs()
     {

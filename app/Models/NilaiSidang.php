@@ -20,4 +20,19 @@ class NilaiSidang extends Model
     {
         return $this->belongsTo(Dosen::class);
     }
+
+    public function getNilaiHurufAttribute()
+    {
+        if ($this->nilai === null) return '-';
+        $val = (float)$this->nilai;
+        if ($val >= 92) return 'A';
+        if ($val >= 86) return 'A-';
+        if ($val >= 81) return 'B+';
+        if ($val >= 76) return 'B';
+        if ($val >= 71) return 'B-';
+        if ($val >= 66) return 'C+';
+        if ($val >= 60) return 'C';
+        if ($val >= 55) return 'D';
+        return 'E';
+    }
 }

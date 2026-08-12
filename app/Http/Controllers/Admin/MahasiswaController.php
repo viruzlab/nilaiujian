@@ -29,9 +29,17 @@ class MahasiswaController extends Controller
             'judul_skripsi' => 'nullable|string|max:1000',
             'pembimbing_1_id' => 'nullable|exists:dosens,id',
             'pembimbing_2_id' => 'nullable|exists:dosens,id|different:pembimbing_1_id',
+            'jumlah_mutu' => 'nullable|numeric',
+            'jumlah_sks' => 'nullable|integer',
+            'mata_kuliah_ulang' => 'nullable|integer',
+            'semester' => 'nullable|string|max:50',
+            'ipk' => 'nullable|numeric|max:4.00',
         ]);
 
-        Mahasiswa::create($request->only('nim', 'nama', 'judul_skripsi', 'pembimbing_1_id', 'pembimbing_2_id'));
+        Mahasiswa::create($request->only(
+            'nim', 'nama', 'judul_skripsi', 'pembimbing_1_id', 'pembimbing_2_id',
+            'jumlah_mutu', 'jumlah_sks', 'mata_kuliah_ulang', 'semester', 'ipk'
+        ));
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil ditambahkan!');
     }
@@ -50,9 +58,17 @@ class MahasiswaController extends Controller
             'judul_skripsi' => 'nullable|string|max:1000',
             'pembimbing_1_id' => 'nullable|exists:dosens,id',
             'pembimbing_2_id' => 'nullable|exists:dosens,id|different:pembimbing_1_id',
+            'jumlah_mutu' => 'nullable|numeric',
+            'jumlah_sks' => 'nullable|integer',
+            'mata_kuliah_ulang' => 'nullable|integer',
+            'semester' => 'nullable|string|max:50',
+            'ipk' => 'nullable|numeric|max:4.00',
         ]);
 
-        $mahasiswa->update($request->only('nim', 'nama', 'judul_skripsi', 'pembimbing_1_id', 'pembimbing_2_id'));
+        $mahasiswa->update($request->only(
+            'nim', 'nama', 'judul_skripsi', 'pembimbing_1_id', 'pembimbing_2_id',
+            'jumlah_mutu', 'jumlah_sks', 'mata_kuliah_ulang', 'semester', 'ipk'
+        ));
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Data mahasiswa berhasil diperbarui!');
     }

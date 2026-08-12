@@ -54,6 +54,36 @@
                                 </select>
                             </div>
                         </div>
+                        <hr class="border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="jumlah_mutu" class="block text-sm font-medium text-gray-700 mb-1">Jumlah Mutu</label>
+                                <input type="number" step="0.01" name="jumlah_mutu" id="jumlah_mutu" value="{{ old('jumlah_mutu') }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label for="jumlah_sks" class="block text-sm font-medium text-gray-700 mb-1">Jumlah SKS</label>
+                                <input type="number" name="jumlah_sks" id="jumlah_sks" value="{{ old('jumlah_sks') }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label for="ipk" class="block text-sm font-medium text-gray-700 mb-1">IPK (0 - 4.00)</label>
+                                <input type="number" step="0.01" max="4.00" name="ipk" id="ipk" value="{{ old('ipk') }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="semester" class="block text-sm font-medium text-gray-700 mb-1">Semester</label>
+                                <input type="text" name="semester" id="semester" value="{{ old('semester') }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all">
+                            </div>
+                            <div>
+                                <label for="mata_kuliah_ulang" class="block text-sm font-medium text-gray-700 mb-1">Kontrak Ulang (Kali)</label>
+                                <input type="number" name="mata_kuliah_ulang" id="mata_kuliah_ulang" value="{{ old('mata_kuliah_ulang', 0) }}"
+                                    class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all">
+                            </div>
+                        </div>
                         <div class="flex items-center space-x-3 pt-2">
                             <button type="submit" class="bg-green-600 text-white px-6 py-2.5 rounded-lg hover:bg-green-700 transition-colors font-medium">Simpan</button>
                             <a href="{{ route('admin.mahasiswa.index') }}" class="text-gray-600 hover:text-gray-800 transition-colors">Batal</a>

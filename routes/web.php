@@ -20,7 +20,10 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     
     Route::resource('mahasiswa', \App\Http\Controllers\Admin\MahasiswaController::class);
     Route::resource('dosen', \App\Http\Controllers\Admin\DosenController::class);
+    
+    Route::get('/jadwal/rekap', [\App\Http\Controllers\Admin\JadwalSidangController::class, 'rekap'])->name('jadwal.rekap');
     Route::get('/jadwal/laporan/download', [\App\Http\Controllers\Admin\JadwalSidangController::class, 'downloadLaporan'])->name('jadwal.laporan');
+    
     Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalSidangController::class);
 });
 

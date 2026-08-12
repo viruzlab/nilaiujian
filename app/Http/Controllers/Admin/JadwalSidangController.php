@@ -131,6 +131,27 @@ class JadwalSidangController extends Controller
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal sidang berhasil dihapus!');
     }
 
+    public function rekap(Request $request)
+    {
+        $kelompokList = JadwalSidang::select('kelompok_ujian')
+            ->whereNotNull('kelompok_ujian')
+            ->distinct()
+            ->orderBy('kelompok_ujian')
+            ->pluck('kelompok_ujian');
+
+        $selectedKelompok = $request->query('kelompok');
+
+        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen']);
+
+        if ($selectedKelompok) {
+            $query->where('kelompok_ujian', $selectedKelompok);
+        }
+
+        $jadwals = $query->get();
+
+        return view('admin.jadwal.rekap', compact('jadwals', 'kelompokList', 'selectedKelompok'));
+    }
+
     public function downloadLaporan(Request $request)
     {
         $kelompok = $request->query('kelompok');

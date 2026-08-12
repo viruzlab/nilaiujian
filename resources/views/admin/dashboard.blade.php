@@ -78,16 +78,95 @@
                 </div>
             </div>
 
+            <!-- Charts Section -->
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900">
-                    <h3 class="text-lg font-semibold mb-4 text-gray-800">Akses Cepat</h3>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <a href="{{ route('admin.dosen.index') }}" class="flex items-center justify-center px-4 py-3 bg-emerald-50 text-emerald-700 font-medium rounded-xl hover:bg-emerald-100 transition-colors border border-emerald-100 shadow-sm">Kelola Dosen</a>
-                        <a href="{{ route('admin.mahasiswa.index') }}" class="flex items-center justify-center px-4 py-3 bg-green-50 text-green-700 font-medium rounded-xl hover:bg-green-100 transition-colors border border-green-100 shadow-sm">Kelola Mahasiswa</a>
-                        <a href="{{ route('admin.jadwal.index') }}" class="flex items-center justify-center px-4 py-3 bg-emerald-50 text-emerald-700 font-medium rounded-xl hover:bg-emerald-100 transition-colors border border-emerald-100 shadow-sm">Penjadwalan Sidang</a>
+                <div class="p-6 text-gray-900 border-b border-gray-100">
+                    <h3 class="text-lg font-semibold mb-6 text-gray-800">Statistik Penilaian Sidang</h3>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Chart 1: Status Penilaian Mahasiswa -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col items-center">
+                            <h4 class="text-sm font-medium text-gray-600 mb-4 text-center">Status Mahasiswa Ujian</h4>
+                            <div class="relative w-full max-w-[250px] aspect-square">
+                                <canvas id="mahasiswaChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Progres Dosen Menilai -->
+                        <div class="bg-gray-50 rounded-xl p-4 border border-gray-100 flex flex-col items-center">
+                            <h4 class="text-sm font-medium text-gray-600 mb-4 text-center">Progres Dosen Menilai</h4>
+                            <div class="relative w-full max-w-[250px] aspect-square">
+                                <canvas id="dosenChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart 1: Mahasiswa
+            const mhsCtx = document.getElementById('mahasiswaChart').getContext('2d');
+            const totalUjian = {{ $jumlahUjian }};
+            const selesaiDinilai = {{ $jadwalSelesaiDinilai }};
+            const belumDinilai = totalUjian - selesaiDinilai;
+
+            new Chart(mhsCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sudah Dinilai (' + selesaiDinilai + ')', 'Belum Lengkap (' + belumDinilai + ')'],
+                    datasets: [{
+                        data: [selesaiDinilai, belumDinilai],
+                        backgroundColor: [
+                            '#10b981', // emerald-500
+                            '#e5e7eb'  // gray-200
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // Chart 2: Dosen
+            const dosenCtx = document.getElementById('dosenChart').getContext('2d');
+            const targetSelesai = {{ $tugasSelesai }};
+            const sisaTugas = {{ $totalTugasMenilai - $tugasSelesai }};
+
+            new Chart(dosenCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Sudah Mengisi (' + targetSelesai + ')', 'Belum Mengisi (' + sisaTugas + ')'],
+                    datasets: [{
+                        data: [targetSelesai, sisaTugas],
+                        backgroundColor: [
+                            '#3b82f6', // blue-500
+                            '#e5e7eb'  // gray-200
+                        ],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: { position: 'bottom' }
+                    },
+                    cutout: '65%'
+                }
+            });
+        });
+    </script>
 </x-app-layout>

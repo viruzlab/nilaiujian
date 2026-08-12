@@ -87,7 +87,7 @@
                                         @foreach($jadwal->nilaiSidangs as $nsIndex => $ns)
                                             <div>{{ $nsIndex + 1 }}. {{ $ns->dosen->nama }} 
                                                 @if($ns->nilai !== null)
-                                                    <span class="text-green-600 font-semibold">(Nilai: {{ $ns->nilai }})</span>
+                                                    <span class="text-green-600 font-semibold">(Nilai: {{ $ns->nilai }} | {{ $ns->nilai_huruf }})</span>
                                                 @endif
                                             </div>
                                         @endforeach
