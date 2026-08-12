@@ -3,8 +3,8 @@
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">Kelola Data Mahasiswa</h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+    <div class="py-6">
+        <div class="max-w-[98%] mx-auto sm:px-4 lg:px-6">
             @if(session('success'))
                 <div class="mb-4 bg-green-50 text-green-700 p-4 rounded-lg border border-green-200">
                     {{ session('success') }}
@@ -32,6 +32,11 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Mahasiswa</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul Skripsi</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembimbing</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">IPK</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Jml Mutu</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Jml SKS</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">MK Ulang</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Semester</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
@@ -46,6 +51,11 @@
                                         @if($mhs->pembimbing2) 2. {{ $mhs->pembimbing2->nama }} @endif
                                         @if(!$mhs->pembimbing1 && !$mhs->pembimbing2) - @endif
                                     </td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 text-center {{ !$mhs->ipk ? 'bg-red-50 text-red-500' : '' }}">{{ $mhs->ipk ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 text-center {{ !$mhs->jumlah_mutu ? 'bg-red-50 text-red-500' : '' }}">{{ $mhs->jumlah_mutu ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 text-center {{ !$mhs->jumlah_sks ? 'bg-red-50 text-red-500' : '' }}">{{ $mhs->jumlah_sks ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 text-center">{{ $mhs->mata_kuliah_ulang ?? '0' }}</td>
+                                    <td class="px-6 py-4 text-sm text-gray-900 text-center {{ !$mhs->semester ? 'bg-red-50 text-red-500' : '' }}">{{ $mhs->semester ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
                                         <a href="{{ route('admin.mahasiswa.edit', $mhs->id) }}" class="text-emerald-600 hover:underline">Edit</a>
                                         <form action="{{ route('admin.mahasiswa.destroy', $mhs->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus mahasiswa ini?')">
@@ -57,7 +67,7 @@
                                 </tr>
                                 @endforeach
                                 @if($mahasiswas->isEmpty())
-                                <tr><td colspan="4" class="px-6 py-10 text-center text-gray-500">Belum ada data mahasiswa.</td></tr>
+                                <tr><td colspan="9" class="px-6 py-10 text-center text-gray-500">Belum ada data mahasiswa.</td></tr>
                                 @endif
                             </tbody>
                         </table>
