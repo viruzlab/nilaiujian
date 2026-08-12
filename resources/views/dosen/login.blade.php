@@ -55,6 +55,9 @@
                         @click="open = true"
                         @input="open = true; selectedDosenId = ''; selectedDosenName = '';"
                         placeholder="Ketik atau pilih nama dosen..."
+                        autocomplete="new-password"
+                        readonly
+                        onfocus="this.removeAttribute('readonly'); open = true;"
                         class="pl-11 block w-full rounded-xl border-gray-200 bg-gray-50/50 py-3 pr-10 text-gray-900 shadow-sm focus:border-[#115e41] focus:bg-white focus:ring focus:ring-[#115e41] focus:ring-opacity-20 transition-all duration-200 sm:text-sm">
                     <div class="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                         <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -104,7 +107,7 @@
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                     </div>
-                    <input type="password" name="password" required autocomplete="current-password" class="pl-11 block w-full rounded-xl border-gray-200 bg-gray-50/50 py-3 text-gray-900 shadow-sm focus:border-[#115e41] focus:bg-white focus:ring focus:ring-[#115e41] focus:ring-opacity-20 transition-all duration-200 sm:text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
+                    <input id="password" type="password" name="password" required autocomplete="new-password" readonly onfocus="this.removeAttribute('readonly');" class="pl-11 block w-full rounded-xl border-gray-200 bg-gray-50/50 py-3 text-gray-900 shadow-sm focus:border-[#115e41] focus:bg-white focus:ring focus:ring-[#115e41] focus:ring-opacity-20 transition-all duration-200 sm:text-sm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;">
                 </div>
             </div>
 
