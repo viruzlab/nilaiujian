@@ -27,6 +27,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/jadwal/rekap', [\App\Http\Controllers\Admin\JadwalSidangController::class, 'rekap'])->name('jadwal.rekap');
     Route::get('/jadwal/laporan/download', [\App\Http\Controllers\Admin\JadwalSidangController::class, 'downloadLaporan'])->name('jadwal.laporan');
     
+    Route::get('/jadwal/{jadwal}/nilai', [\App\Http\Controllers\Admin\JadwalSidangController::class, 'editNilai'])->name('jadwal.nilai.edit');
+    Route::post('/jadwal/{jadwal}/nilai', [\App\Http\Controllers\Admin\JadwalSidangController::class, 'updateNilai'])->name('jadwal.nilai.update');
+    
     Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalSidangController::class);
 });
 

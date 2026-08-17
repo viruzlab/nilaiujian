@@ -133,6 +133,32 @@ class JadwalSidangController extends Controller
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal sidang berhasil dihapus!');
     }
 
+    public function editNilai(JadwalSidang $jadwal)
+    {
+        $jadwal->load(['mahasiswa', 'nilaiSidangs.dosen']);
+        return view('admin.jadwal.nilai', compact('jadwal'));
+    }
+
+    public function updateNilai(Request $request, JadwalSidang $jadwal)
+    {
+        $request->validate([
+            'nilai' => 'required|array',
+            'nilai.*' => 'nullable|numeric|min:0|max:100',
+        ]);
+
+        foreach ($request->nilai as $nilaiSidangId => $nilaiValue) {
+            $ns = NilaiSidang::where('id', $nilaiSidangId)
+                ->where('jadwal_sidang_id', $jadwal->id)
+                ->first();
+            if ($ns) {
+                // Konversi string kosong menjadi null
+                $ns->update(['nilai' => $nilaiValue === '' ? null : $nilaiValue]);
+            }
+        }
+
+        return redirect()->route('admin.jadwal.index', ['kelompok' => $jadwal->kelompok_ujian])->with('success', 'Nilai sidang berhasil diupdate oleh Admin!');
+    }
+
     public function rekap(Request $request)
     {
         $kelompokList = JadwalSidang::select('kelompok_ujian')

@@ -119,6 +119,7 @@
                                     </td>
                                     <td class="px-4 py-4 whitespace-nowrap text-sm border align-top text-center">
                                         <div class="flex items-center justify-center gap-2">
+                                            <a href="{{ route('admin.jadwal.nilai.edit', $jadwal->id) }}" class="text-blue-600 hover:underline text-sm font-semibold">Input Nilai</a>
                                             <a href="{{ route('admin.jadwal.edit', $jadwal->id) }}" class="text-emerald-600 hover:underline text-sm font-semibold">Edit</a>
                                             <form action="{{ route('admin.jadwal.destroy', $jadwal->id) }}" method="POST" onsubmit="return confirm('Yakin ingin menghapus jadwal ini?')">
                                                 @csrf
