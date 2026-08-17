@@ -10,16 +10,18 @@
                     {{ session('success') }}
                 </div>
             @endif
+            @if(session('info'))
+                <div class="mb-4 bg-blue-50 text-blue-700 p-4 rounded-lg border border-blue-200">
+                    {{ session('info') }}
+                </div>
+            @endif
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold flex-1">Daftar Dosen Penguji</h3>
                         <div class="flex flex-wrap gap-2">
-                            <form action="{{ route('admin.dosen.generate-passwords') }}" method="POST" class="inline" onsubmit="return confirm('PERHATIAN: Ini akan mereset dan membuat ulang password acak untuk SEMUA dosen. Anda yakin?')">
-                                @csrf
-                                <button type="submit" class="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm hover:bg-yellow-600 transition-colors shadow-sm font-medium">Generate Ulang Password</button>
-                            </form>
+                            <!-- Removed mass generate password button -->
                             <a href="{{ route('admin.dosen.download-passwords') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors shadow-sm font-medium flex items-center">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                 Download Excel
@@ -35,6 +37,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIDN</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Dosen</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email Akun</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Password</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
                                 </tr>
                             </thead>
@@ -44,7 +47,19 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $dosen->nidn ?? '-' }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $dosen->nama }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{ $dosen->user->email ?? '-' }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm">
+                                        @if($dosen->password_plain)
+                                            <span class="font-mono bg-gray-100 px-2 py-1 rounded text-gray-800">{{ $dosen->password_plain }}</span>
+                                        @else
+                                            <span class="text-gray-400 italic text-xs">Diubah mandiri</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                                        <form action="{{ route('admin.dosen.reset-password', $dosen->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin mereset password dosen ini menjadi password acak baru?')">
+                                            @csrf
+                                            <button type="submit" class="text-yellow-600 hover:underline">Reset Pass</button>
+                                        </form>
+                                        <span class="text-gray-300">|</span>
                                         <a href="{{ route('admin.dosen.edit', $dosen->id) }}" class="text-emerald-600 hover:underline">Edit</a>
                                         <form action="{{ route('admin.dosen.destroy', $dosen->id) }}" method="POST" class="inline" onsubmit="return confirm('Yakin ingin menghapus dosen ini?')">
                                             @csrf

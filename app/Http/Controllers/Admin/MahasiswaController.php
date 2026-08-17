@@ -36,10 +36,17 @@ class MahasiswaController extends Controller
             'ipk' => 'nullable|numeric|max:4.00',
         ]);
 
-        Mahasiswa::create($request->only(
+        $data = $request->only(
             'nim', 'nama', 'judul_skripsi', 'pembimbing_1_id', 'pembimbing_2_id',
             'jumlah_mutu', 'jumlah_sks', 'mata_kuliah_ulang', 'semester', 'ipk'
-        ));
+        );
+
+        // Otomatis tambah 6 SKS (skripsi) ke jumlah SKS yang diinput
+        if (!empty($data['jumlah_sks'])) {
+            $data['jumlah_sks'] = (int) $data['jumlah_sks'] + 6;
+        }
+
+        Mahasiswa::create($data);
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Mahasiswa berhasil ditambahkan!');
     }
@@ -65,10 +72,17 @@ class MahasiswaController extends Controller
             'ipk' => 'nullable|numeric|max:4.00',
         ]);
 
-        $mahasiswa->update($request->only(
+        $data = $request->only(
             'nim', 'nama', 'judul_skripsi', 'pembimbing_1_id', 'pembimbing_2_id',
             'jumlah_mutu', 'jumlah_sks', 'mata_kuliah_ulang', 'semester', 'ipk'
-        ));
+        );
+
+        // Otomatis tambah 6 SKS (skripsi) ke jumlah SKS yang diinput
+        if (!empty($data['jumlah_sks'])) {
+            $data['jumlah_sks'] = (int) $data['jumlah_sks'] + 6;
+        }
+
+        $mahasiswa->update($data);
 
         return redirect()->route('admin.mahasiswa.index')->with('success', 'Data mahasiswa berhasil diperbarui!');
     }

@@ -14,7 +14,12 @@ class AuthController extends Controller
     {
         if (Auth::check()) {
             if (Auth::user()->role === 'admin') return redirect()->route('admin.dashboard');
-            if (Auth::user()->role === 'dosen') return redirect()->route('dosen.dashboard');
+            if (Auth::user()->role === 'dosen') {
+                if (Auth::user()->dosen->first_login) {
+                    return redirect()->route('dosen.password.setup');
+                }
+                return redirect()->route('dosen.dashboard');
+            }
         }
 
         $dosens = Dosen::all();
@@ -35,6 +40,11 @@ class AuthController extends Controller
 
         if (Auth::attempt(['email' => $dosen->user->email, 'password' => $request->password])) {
             $request->session()->regenerate();
+            
+            if ($dosen->first_login) {
+                return redirect()->route('dosen.password.setup');
+            }
+            
             return redirect()->intended(route('dosen.dashboard', absolute: false));
         }
 

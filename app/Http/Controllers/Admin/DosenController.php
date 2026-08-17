@@ -27,13 +27,15 @@ class DosenController extends Controller
             'nama' => 'required|string|max:255',
             'nidn' => 'nullable|string|max:50|unique:dosens,nidn',
             'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
         ]);
+
+        // Auto-generate password untuk dosen baru
+        $generatedPassword = \Illuminate\Support\Str::random(6);
 
         $user = User::create([
             'name' => $request->nama,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'password' => Hash::make($generatedPassword),
             'role' => 'dosen',
         ]);
 
@@ -41,9 +43,11 @@ class DosenController extends Controller
             'user_id' => $user->id,
             'nama' => $request->nama,
             'nidn' => $request->nidn,
+            'password_plain' => $generatedPassword,
+            'first_login' => true,
         ]);
 
-        return redirect()->route('admin.dosen.index')->with('success', 'Dosen berhasil ditambahkan!');
+        return redirect()->route('admin.dosen.index')->with('success', 'Dosen berhasil ditambahkan! Password: ' . $generatedPassword);
     }
 
     public function edit(Dosen $dosen)
@@ -89,25 +93,24 @@ class DosenController extends Controller
         return redirect()->route('admin.dosen.index')->with('success', 'Dosen berhasil dihapus!');
     }
 
-    public function generatePasswords()
+    public function resetPassword(Dosen $dosen)
     {
-        $dosens = Dosen::with('user')->get();
-        foreach ($dosens as $dosen) {
-            if ($dosen->user) {
-                // Generate a random 6-character alphanumeric password
-                $newPassword = \Illuminate\Support\Str::random(6);
-                
-                $dosen->user->update([
-                    'password' => Hash::make($newPassword)
-                ]);
-                
-                $dosen->update([
-                    'password_plain' => $newPassword
-                ]);
-            }
+        if (!$dosen->user) {
+            return redirect()->route('admin.dosen.index')->withErrors(['Dosen ini tidak memiliki akun user.']);
         }
 
-        return redirect()->route('admin.dosen.index')->with('success', 'Password untuk semua dosen berhasil di-generate ulang!');
+        $newPassword = \Illuminate\Support\Str::random(6);
+        
+        $dosen->user->update([
+            'password' => Hash::make($newPassword)
+        ]);
+        
+        $dosen->update([
+            'password_plain' => $newPassword,
+            'first_login' => true
+        ]);
+
+        return redirect()->route('admin.dosen.index')->with('success', "Password untuk {$dosen->nama} berhasil di-reset menjadi: {$newPassword}");
     }
 
     public function downloadPasswords()

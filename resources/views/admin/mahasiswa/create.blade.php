@@ -61,10 +61,14 @@
                                 <input type="number" step="0.01" name="jumlah_mutu" id="jumlah_mutu" value="{{ old('jumlah_mutu') }}"
                                     class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all">
                             </div>
-                            <div>
+                            <div x-data="{ sks: '' }">
                                 <label for="jumlah_sks" class="block text-sm font-medium text-gray-700 mb-1">Jumlah SKS</label>
                                 <input type="number" name="jumlah_sks" id="jumlah_sks" value="{{ old('jumlah_sks') }}"
+                                    x-model="sks"
                                     class="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none transition-all">
+                                <p x-show="sks !== '' && sks !== null" x-cloak class="text-xs text-emerald-600 mt-1 font-medium">
+                                    Tersimpan: <span x-text="parseInt(sks) + 6"></span> SKS (Otomatis ditambah SKS Skripsi 6 SKS)
+                                </p>
                             </div>
                             <div>
                                 <label for="ipk" class="block text-sm font-medium text-gray-700 mb-1">IPK (0 - 4.00)</label>

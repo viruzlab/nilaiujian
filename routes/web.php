@@ -8,6 +8,8 @@ Route::post('/login-dosen', [\App\Http\Controllers\Dosen\AuthController::class, 
 
 Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
     Route::get('/dashboard', [\App\Http\Controllers\Dosen\DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/setup-password', [\App\Http\Controllers\Dosen\PasswordController::class, 'setup'])->name('password.setup');
+    Route::post('/setup-password', [\App\Http\Controllers\Dosen\PasswordController::class, 'update'])->name('password.update');
     Route::post('/nilai/{nilai_sidang_id}', [\App\Http\Controllers\Dosen\NilaiController::class, 'store'])->name('nilai.store');
 });
 
@@ -15,7 +17,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::get('/dashboard', [\App\Http\Controllers\Admin\DashboardController::class, 'index'])->name('dashboard');
     Route::post('/dashboard/import', [\App\Http\Controllers\Admin\DashboardController::class, 'importJadwal'])->name('dashboard.import');
     
-    Route::post('/dosen/generate-passwords', [\App\Http\Controllers\Admin\DosenController::class, 'generatePasswords'])->name('dosen.generate-passwords');
+    Route::post('/dosen/{dosen}/reset-password', [\App\Http\Controllers\Admin\DosenController::class, 'resetPassword'])->name('dosen.reset-password');
     Route::get('/dosen/download-passwords', [\App\Http\Controllers\Admin\DosenController::class, 'downloadPasswords'])->name('dosen.download-passwords');
     
     Route::resource('mahasiswa', \App\Http\Controllers\Admin\MahasiswaController::class);

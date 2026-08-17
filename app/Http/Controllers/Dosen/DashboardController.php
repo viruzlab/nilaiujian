@@ -17,6 +17,10 @@ class DashboardController extends Controller
             return redirect('/')->withErrors(['dosen_id' => 'Data dosen tidak ditemukan.']);
         }
 
+        if ($dosen->first_login) {
+            return redirect()->route('dosen.password.setup');
+        }
+
         // Get list of unique kelompok ujian that this dosen is assigned to
         $kelompokList = NilaiSidang::where('dosen_id', $dosen->id)
             ->whereHas('jadwalSidang', function($q) {
