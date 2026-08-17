@@ -98,6 +98,7 @@ class MahasiswaImport implements ToCollection
                 }
             }
 
+            try {
                 $updateData = [
                     'nama' => $nama,
                 ];
