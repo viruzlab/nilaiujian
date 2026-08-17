@@ -25,13 +25,28 @@
                     @endif
 
                     <div class="overflow-x-auto">
+                        {{-- Filter Kelompok Ujian --}}
+                        @if($kelompokList->isNotEmpty())
+                        <div class="mb-5 flex flex-wrap items-center gap-2">
+                            <span class="text-sm font-semibold text-gray-600 mr-1">Kelompok Ujian:</span>
+                            <a href="{{ route('admin.mahasiswa.index') }}" 
+                               class="px-4 py-1.5 rounded-full text-sm font-medium border transition-all {{ !$selectedKelompok ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600' }}">
+                                Semua
+                            </a>
+                            @foreach($kelompokList as $kel)
+                            <a href="{{ route('admin.mahasiswa.index', ['kelompok' => $kel]) }}" 
+                               class="px-4 py-1.5 rounded-full text-sm font-medium border transition-all {{ $selectedKelompok == $kel ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600' }}">
+                                {{ $kel }}
+                            </a>
+                            @endforeach
+                        </div>
+                        @endif
                         <table class="min-w-full divide-y divide-gray-200 mt-4">
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIM</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Mahasiswa</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul Skripsi</th>
-                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Kelompok</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembimbing</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">IPK</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Jml Mutu</th>
@@ -47,16 +62,6 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $mhs->nim }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $mhs->nama }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ $mhs->judul_skripsi ?? '-' }}</td>
-                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 text-center">
-                                        @php
-                                            $kelompok = $mhs->jadwalSidangs->first()->kelompok_ujian ?? '-';
-                                        @endphp
-                                        @if($kelompok !== '-')
-                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">{{ $kelompok }}</span>
-                                        @else
-                                            <span class="text-gray-400">-</span>
-                                        @endif
-                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">
                                         @if($mhs->pembimbing1) 1. {{ $mhs->pembimbing1->nama }}<br> @endif
                                         @if($mhs->pembimbing2) 2. {{ $mhs->pembimbing2->nama }} @endif
@@ -78,7 +83,7 @@
                                 </tr>
                                 @endforeach
                                 @if($mahasiswas->isEmpty())
-                                <tr><td colspan="10" class="px-6 py-10 text-center text-gray-500">Belum ada data mahasiswa.</td></tr>
+                                <tr><td colspan="9" class="px-6 py-10 text-center text-gray-500">Belum ada data mahasiswa.</td></tr>
                                 @endif
                             </tbody>
                         </table>

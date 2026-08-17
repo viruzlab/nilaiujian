@@ -9,9 +9,17 @@ use Illuminate\Http\Request;
 
 class MahasiswaController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $mahasiswas = Mahasiswa::with(['pembimbing1', 'pembimbing2', 'jadwalSidangs'])
+        $kelompokList = \App\Models\JadwalSidang::select('kelompok_ujian')
+            ->whereNotNull('kelompok_ujian')
+            ->distinct()
+            ->orderBy('kelompok_ujian')
+            ->pluck('kelompok_ujian');
+
+        $selectedKelompok = $request->query('kelompok');
+
+        $query = Mahasiswa::with(['pembimbing1', 'pembimbing2', 'jadwalSidangs'])
             ->orderBy(
                 \App\Models\JadwalSidang::select('kelompok_ujian')
                     ->whereColumn('mahasiswa_id', 'mahasiswas.id')
@@ -19,9 +27,17 @@ class MahasiswaController extends Controller
                     ->limit(1),
                 'asc'
             )
-            ->orderBy('nama', 'asc')
-            ->get();
-        return view('admin.mahasiswa.index', compact('mahasiswas'));
+            ->orderBy('nama', 'asc');
+
+        if ($selectedKelompok) {
+            $query->whereHas('jadwalSidangs', function($q) use ($selectedKelompok) {
+                $q->where('kelompok_ujian', $selectedKelompok);
+            });
+        }
+
+        $mahasiswas = $query->get();
+
+        return view('admin.mahasiswa.index', compact('mahasiswas', 'kelompokList', 'selectedKelompok'));
     }
 
     public function create()
