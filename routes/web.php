@@ -20,6 +20,7 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/dosen/{dosen}/reset-password', [\App\Http\Controllers\Admin\DosenController::class, 'resetPassword'])->name('dosen.reset-password');
     Route::get('/dosen/download-passwords', [\App\Http\Controllers\Admin\DosenController::class, 'downloadPasswords'])->name('dosen.download-passwords');
     
+    Route::post('mahasiswa/import', [\App\Http\Controllers\Admin\MahasiswaController::class, 'import'])->name('mahasiswa.import');
     Route::resource('mahasiswa', \App\Http\Controllers\Admin\MahasiswaController::class);
     Route::resource('dosen', \App\Http\Controllers\Admin\DosenController::class);
     

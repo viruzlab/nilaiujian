@@ -15,7 +15,16 @@
                 <div class="p-6 text-gray-900">
                     <div class="flex justify-between items-center mb-4">
                         <h3 class="text-lg font-semibold">Daftar Mahasiswa</h3>
-                        <a href="{{ route('admin.mahasiswa.create') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors shadow-sm">+ Tambah Mahasiswa</a>
+                        <div class="flex gap-2 items-center">
+                            <form action="{{ route('admin.mahasiswa.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 m-0" onsubmit="return confirm('Peringatan: Proses ini akan mencari NIM di database dan memperbarui data (IPK, Semester, Mutu, SKS, dll). Lanjutkan update data?');">
+                                @csrf
+                                <input type="file" name="file" accept=".xlsx,.xls,.csv" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" required>
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors shadow-sm whitespace-nowrap">
+                                    Update Data (Excel)
+                                </button>
+                            </form>
+                            <a href="{{ route('admin.mahasiswa.create') }}" class="bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors shadow-sm whitespace-nowrap">+ Tambah Mahasiswa</a>
+                        </div>
                     </div>
                     
                     @if($errors->has('file'))

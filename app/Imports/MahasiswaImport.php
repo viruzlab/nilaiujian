@@ -24,6 +24,11 @@ class MahasiswaImport implements ToCollection
             $nama = null;
             $judul = null;
             $pembimbingRaw = null;
+            $ipk = null;
+            $semester = null;
+            $jmlMutu = null;
+            $mkUlang = null;
+            $sks = null;
 
             // Cari kolom yang mengandung NAMA/NIM (ada teks dan angka 5-10 digit)
             foreach ($row as $colIndex => $cellValue) {
@@ -35,9 +40,27 @@ class MahasiswaImport implements ToCollection
                 
                 // Cari angka NIM
                 if (preg_match('/([0-9]{5,10})/', $cellStr, $matches)) {
-                    // Pastikan ini bukan format tanggal/waktu (biasanya panjang teks NAMA/NIM lebih dari sekadar angka)
-                    // Jika sel ini mengandung NAMA dan NIM, panjangnya pasti lebih dari NIM itu sendiri
-                    if (strlen(trim($cellStr)) > strlen($matches[1])) {
+                    // Cek apakah ini format baru (NIM terpisah dari Nama di kolom sebelumnya)
+                    if (trim($cellStr) === $matches[1]) {
+                        $nim = $matches[1];
+                        $nama = isset($row[$colIndex - 1]) ? trim((string)$row[$colIndex - 1]) : null;
+                        
+                        // Coba ambil field format baru (IPK, Semester, Jml Mutu, MK Ulang, SKS)
+                        $ipkStr = isset($row[$colIndex + 1]) ? (string)$row[$colIndex + 1] : null;
+                        $ipk = $ipkStr !== null ? (float)str_replace(',', '.', $ipkStr) : null;
+                        
+                        $semester = isset($row[$colIndex + 2]) ? trim((string)$row[$colIndex + 2]) : null;
+                        
+                        $jmlMutuStr = isset($row[$colIndex + 3]) ? (string)$row[$colIndex + 3] : null;
+                        $jmlMutu = $jmlMutuStr !== null ? (float)str_replace(',', '.', $jmlMutuStr) : null;
+                        
+                        $mkUlang = isset($row[$colIndex + 4]) ? (int)$row[$colIndex + 4] : null;
+                        $sks = isset($row[$colIndex + 5]) ? (int)$row[$colIndex + 5] : null;
+                        
+                        break;
+                    }
+                    // Format lama (Nama dan NIM tergabung)
+                    else if (strlen(trim($cellStr)) > strlen($matches[1])) {
                         $nim = $matches[1];
                         $namaNimRaw = $cellStr;
                         $nama = trim(str_replace([$nim, '/', "\n", "\r"], ' ', $namaNimRaw));
@@ -75,15 +98,22 @@ class MahasiswaImport implements ToCollection
                 }
             }
 
-            try {
+                $updateData = [
+                    'nama' => $nama,
+                ];
+                
+                if ($judul !== null) $updateData['judul_skripsi'] = $judul;
+                if ($pembimbing1Id !== null) $updateData['pembimbing_1_id'] = $pembimbing1Id;
+                if ($pembimbing2Id !== null) $updateData['pembimbing_2_id'] = $pembimbing2Id;
+                if ($ipk !== null) $updateData['ipk'] = $ipk;
+                if ($semester !== null) $updateData['semester'] = $semester;
+                if ($jmlMutu !== null) $updateData['jumlah_mutu'] = $jmlMutu;
+                if ($mkUlang !== null) $updateData['mata_kuliah_ulang'] = $mkUlang;
+                if ($sks !== null) $updateData['jumlah_sks'] = $sks;
+
                 Mahasiswa::updateOrCreate(
                     ['nim' => $nim],
-                    [
-                        'nama' => $nama,
-                        'judul_skripsi' => $judul,
-                        'pembimbing_1_id' => $pembimbing1Id,
-                        'pembimbing_2_id' => $pembimbing2Id,
-                    ]
+                    $updateData
                 );
                 Log::info("Berhasil menyimpan mahasiswa: {$nim}");
             } catch (\Exception $e) {
