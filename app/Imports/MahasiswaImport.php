@@ -55,7 +55,8 @@ class MahasiswaImport implements ToCollection
                         $jmlMutu = $jmlMutuStr !== null ? (float)str_replace(',', '.', $jmlMutuStr) : null;
                         
                         $mkUlang = isset($row[$colIndex + 4]) ? (int)$row[$colIndex + 4] : null;
-                        $sks = isset($row[$colIndex + 5]) ? (int)$row[$colIndex + 5] : null;
+                        $sksRaw = isset($row[$colIndex + 5]) ? trim((string)$row[$colIndex + 5]) : null;
+                        $sks = ($sksRaw !== null && $sksRaw !== '') ? (int)$sksRaw + 6 : null;
                         
                         break;
                     }
