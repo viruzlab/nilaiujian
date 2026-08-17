@@ -112,11 +112,13 @@ class MahasiswaImport implements ToCollection
                 if ($mkUlang !== null) $updateData['mata_kuliah_ulang'] = $mkUlang;
                 if ($sks !== null) $updateData['jumlah_sks'] = $sks;
 
-                Mahasiswa::updateOrCreate(
-                    ['nim' => $nim],
-                    $updateData
-                );
-                Log::info("Berhasil menyimpan mahasiswa: {$nim}");
+                $mahasiswa = Mahasiswa::where('nim', $nim)->first();
+                if ($mahasiswa) {
+                    $mahasiswa->update($updateData);
+                    Log::info("Berhasil mengupdate mahasiswa: {$nim}");
+                } else {
+                    Log::warning("Mahasiswa dengan NIM {$nim} tidak ditemukan di database. Diabaikan sesuai pengaturan.");
+                }
             } catch (\Exception $e) {
                 Log::error("Failed to import Mahasiswa: " . $e->getMessage());
             }
