@@ -21,7 +21,9 @@ class JadwalSidangController extends Controller
 
         $selectedKelompok = $request->query('kelompok');
 
-        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen']);
+        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen'])
+            ->orderBy('kelompok_ujian', 'asc')
+            ->orderBy('waktu_sidang', 'asc');
 
         if ($selectedKelompok) {
             $query->where('kelompok_ujian', $selectedKelompok);
@@ -141,7 +143,9 @@ class JadwalSidangController extends Controller
 
         $selectedKelompok = $request->query('kelompok');
 
-        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen']);
+        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen'])
+            ->orderBy('kelompok_ujian', 'asc')
+            ->orderBy('waktu_sidang', 'asc');
 
         if ($selectedKelompok) {
             $query->where('kelompok_ujian', $selectedKelompok);

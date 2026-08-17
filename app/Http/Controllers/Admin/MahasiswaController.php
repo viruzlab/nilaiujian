@@ -11,7 +11,16 @@ class MahasiswaController extends Controller
 {
     public function index()
     {
-        $mahasiswas = Mahasiswa::with(['pembimbing1', 'pembimbing2'])->get();
+        $mahasiswas = Mahasiswa::with(['pembimbing1', 'pembimbing2', 'jadwalSidangs'])
+            ->orderBy(
+                \App\Models\JadwalSidang::select('kelompok_ujian')
+                    ->whereColumn('mahasiswa_id', 'mahasiswas.id')
+                    ->latest('id')
+                    ->limit(1),
+                'asc'
+            )
+            ->orderBy('nama', 'asc')
+            ->get();
         return view('admin.mahasiswa.index', compact('mahasiswas'));
     }
 

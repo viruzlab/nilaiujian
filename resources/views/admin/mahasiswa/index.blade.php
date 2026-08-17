@@ -31,6 +31,7 @@
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">NIM</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Mahasiswa</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Judul Skripsi</th>
+                                    <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Kelompok</th>
                                     <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Pembimbing</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">IPK</th>
                                     <th class="px-6 py-3 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">Jml Mutu</th>
@@ -46,6 +47,16 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ $mhs->nim }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ $mhs->nama }}</td>
                                     <td class="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">{{ $mhs->judul_skripsi ?? '-' }}</td>
+                                    <td class="px-6 py-4 text-sm font-bold text-gray-900 text-center">
+                                        @php
+                                            $kelompok = $mhs->jadwalSidangs->first()->kelompok_ujian ?? '-';
+                                        @endphp
+                                        @if($kelompok !== '-')
+                                            <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">{{ $kelompok }}</span>
+                                        @else
+                                            <span class="text-gray-400">-</span>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 text-sm text-gray-500">
                                         @if($mhs->pembimbing1) 1. {{ $mhs->pembimbing1->nama }}<br> @endif
                                         @if($mhs->pembimbing2) 2. {{ $mhs->pembimbing2->nama }} @endif
@@ -67,7 +78,7 @@
                                 </tr>
                                 @endforeach
                                 @if($mahasiswas->isEmpty())
-                                <tr><td colspan="9" class="px-6 py-10 text-center text-gray-500">Belum ada data mahasiswa.</td></tr>
+                                <tr><td colspan="10" class="px-6 py-10 text-center text-gray-500">Belum ada data mahasiswa.</td></tr>
                                 @endif
                             </tbody>
                         </table>
