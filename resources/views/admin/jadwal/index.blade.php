@@ -51,6 +51,7 @@
                                     <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border">JUDUL</th>
                                     <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border">PEMBIMBING SKRIPSI</th>
                                     <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border">DOSEN PENELAAH/PENGUJI</th>
+                                    <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border">NILAI</th>
                                     <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border">WAKTU PELAKSANAAN</th>
                                     <th class="px-4 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider border">AKSI</th>
                                 </tr>
@@ -62,6 +63,7 @@
                                     <th class="px-4 py-1 text-center text-xs font-semibold text-gray-500 border">V</th>
                                     <th class="px-4 py-1 text-center text-xs font-semibold text-gray-500 border">VI</th>
                                     <th class="px-4 py-1 text-center text-xs font-semibold text-gray-500 border">VII</th>
+                                    <th class="px-4 py-1 text-center text-xs font-semibold text-gray-500 border">VIII</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -85,12 +87,30 @@
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-900 border align-top">
                                         @foreach($jadwal->nilaiSidangs as $nsIndex => $ns)
-                                            <div>{{ $nsIndex + 1 }}. {{ $ns->dosen->nama }} 
-                                                @if($ns->nilai !== null)
-                                                    <span class="text-green-600 font-semibold">(Nilai: {{ $ns->nilai }} | {{ $ns->nilai_huruf }})</span>
-                                                @endif
-                                            </div>
+                                            <div>{{ $nsIndex + 1 }}. {{ $ns->dosen->nama }}</div>
                                         @endforeach
+                                    </td>
+                                    <td class="px-4 py-4 text-sm text-gray-900 border align-top font-mono">
+                                        <div class="flex justify-between font-semibold border-b border-gray-200 mb-1 pb-1 text-xs text-gray-600">
+                                            <span>No</span>
+                                            <span>Nilai</span>
+                                        </div>
+                                        <div class="flex flex-col gap-1">
+                                            @foreach($jadwal->nilaiSidangs as $nsIndex => $ns)
+                                                <div class="flex justify-between w-full">
+                                                    <span>{{ $nsIndex + 1 }}.</span>
+                                                    <span class="font-semibold text-right {{ $ns->nilai !== null ? 'text-green-700' : 'text-gray-400' }}">{{ $ns->nilai !== null ? number_format($ns->nilai, 2) : '-' }}</span>
+                                                </div>
+                                            @endforeach
+                                            @php
+                                                $nilaiAkhir = $jadwal->getNilaiSidangAkhir();
+                                            @endphp
+                                            @if($nilaiAkhir !== null)
+                                                <div class="border-t border-gray-300 mt-1 pt-1 flex justify-end w-full">
+                                                    <span class="font-bold text-blue-700">{{ number_format($nilaiAkhir, 2) }}</span>
+                                                </div>
+                                            @endif
+                                        </div>
                                     </td>
                                     <td class="px-4 py-4 text-sm text-gray-900 border align-top">
                                         <div>{{ \Carbon\Carbon::parse($jadwal->waktu_sidang)->translatedFormat('l, d F Y') }}</div>
@@ -110,7 +130,7 @@
                                 </tr>
                                 @endforeach
                                 @if($jadwals->isEmpty())
-                                <tr><td colspan="7" class="px-6 py-10 text-center text-gray-500 border">Belum ada jadwal sidang.</td></tr>
+                                <tr><td colspan="8" class="px-6 py-10 text-center text-gray-500 border">Belum ada jadwal sidang.</td></tr>
                                 @endif
                             </tbody>
                         </table>
