@@ -145,7 +145,28 @@
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
                                             {{ $index + 1 }}</td>
                                         <td class="px-4 py-4 text-sm font-medium text-gray-900 border align-middle">
-                                            {{ optional($jadwal->mahasiswa)->nama ?? '-' }}</td>
+                                            <div class="mb-2">{{ optional($jadwal->mahasiswa)->nama ?? '-' }}</div>
+                                            
+                                            @php
+                                                $belumMenilai = $jadwal->nilaiSidangs->filter(function($ns) {
+                                                    return $ns->nilai === null;
+                                                });
+                                            @endphp
+                                            
+                                            @if($belumMenilai->count() > 0)
+                                                <div class="mt-2">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-100 text-red-800 border border-red-200 w-fit">
+                                                        Belum Lengkap (Kurang {{ $belumMenilai->count() }})
+                                                    </span>
+                                                </div>
+                                            @else
+                                                <div class="mt-2">
+                                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800 border border-green-200 w-fit">
+                                                        Nilai Lengkap
+                                                    </span>
+                                                </div>
+                                            @endif
+                                        </td>
 
                                         <td class="px-4 py-4 text-sm text-gray-900 border text-center align-middle">
                                             {{ $npbFormat }}</td>
