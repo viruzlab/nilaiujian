@@ -47,12 +47,35 @@
                 <h3 class="text-lg font-semibold text-gray-800">Daftar Mahasiswa Ujian Sidang</h3>
                 <p class="text-sm text-gray-500 mt-1 mb-4">Berikut adalah daftar mahasiswa yang dijadwalkan untuk Anda uji.</p>
 
-                <div class="mb-5 bg-emerald-50/80 border-l-4 border-emerald-500 p-3.5 rounded-r-lg inline-block w-full sm:w-auto">
-                    <div class="flex items-start">
+                <div class="mb-5 bg-emerald-50/80 border-l-4 border-emerald-500 p-4 rounded-r-lg inline-block w-full">
+                    <div class="flex items-start mb-3">
                         <svg class="w-5 h-5 text-emerald-600 mt-0.5 mr-2 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                         <p class="text-sm text-emerald-800 leading-snug">
                             <strong>Informasi Penilaian:</strong> Skala Penilaian <span class="font-semibold text-emerald-900">1 - 100</span>. Syarat Predikat Cumlaude: Minimal <span class="font-semibold text-emerald-900">82</span>.
                         </p>
+                    </div>
+                    <div class="overflow-x-auto pl-7">
+                        <table class="w-full sm:w-2/3 text-xs text-left text-emerald-900 border-collapse border border-emerald-200 bg-white shadow-sm">
+                            <thead class="bg-emerald-100">
+                                <tr>
+                                    <th class="border border-emerald-200 px-3 py-1.5 font-semibold">Nilai</th>
+                                    <th class="border border-emerald-200 px-3 py-1.5 font-semibold text-center">Huruf</th>
+                                    <th class="border border-emerald-200 px-3 py-1.5 font-semibold text-center">Angka</th>
+                                    <th class="border border-emerald-200 px-3 py-1.5 font-semibold">Derajat Mutu</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">&ge; 92</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">A</td><td class="border border-emerald-200 px-3 py-1 text-center">4,0</td><td class="border border-emerald-200 px-3 py-1">Istimewa</td></tr>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">86 - 91</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">A-</td><td class="border border-emerald-200 px-3 py-1 text-center">3,7</td><td class="border border-emerald-200 px-3 py-1">Hampir Istimewa</td></tr>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">81 - 85</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">B+</td><td class="border border-emerald-200 px-3 py-1 text-center">3,4</td><td class="border border-emerald-200 px-3 py-1">Baik Sekali</td></tr>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">76 - 80</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">B</td><td class="border border-emerald-200 px-3 py-1 text-center">3,0</td><td class="border border-emerald-200 px-3 py-1">Baik</td></tr>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">71 - 75</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">B-</td><td class="border border-emerald-200 px-3 py-1 text-center">2,7</td><td class="border border-emerald-200 px-3 py-1">Cukup Baik</td></tr>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">66 - 70</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">C+</td><td class="border border-emerald-200 px-3 py-1 text-center">2,4</td><td class="border border-emerald-200 px-3 py-1">Lebih dari Cukup</td></tr>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">60 - 65</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">C</td><td class="border border-emerald-200 px-3 py-1 text-center">2,0</td><td class="border border-emerald-200 px-3 py-1">Cukup</td></tr>
+                                <tr class="hover:bg-emerald-50"><td class="border border-emerald-200 px-3 py-1">55 - 59</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold">D</td><td class="border border-emerald-200 px-3 py-1 text-center">1,0</td><td class="border border-emerald-200 px-3 py-1">Kurang</td></tr>
+                                <tr class="hover:bg-red-50"><td class="border border-emerald-200 px-3 py-1">&lt; 55</td><td class="border border-emerald-200 px-3 py-1 text-center font-bold text-red-600">E</td><td class="border border-emerald-200 px-3 py-1 text-center text-red-600">&lt;1,0</td><td class="border border-emerald-200 px-3 py-1 text-red-600">Gagal</td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 
@@ -92,6 +115,23 @@
                             <td class="px-6 py-4">
                                 <div class="text-sm font-medium text-gray-900">{{ $jadwal->jadwalSidang->mahasiswa->nama }}</div>
                                 <div class="text-xs text-gray-500 mt-1">{{ $jadwal->jadwalSidang->mahasiswa->judul_skripsi }}</div>
+                                @php
+                                    $mhs = $jadwal->jadwalSidang->mahasiswa;
+                                    $role = 'Penguji';
+                                    $roleColor = 'bg-blue-100 text-blue-800 border border-blue-200';
+                                    if ($dosen->id === $mhs->pembimbing_1_id) {
+                                        $role = 'Pembimbing 1';
+                                        $roleColor = 'bg-purple-100 text-purple-800 border border-purple-200';
+                                    } elseif ($dosen->id === $mhs->pembimbing_2_id) {
+                                        $role = 'Pembimbing 2';
+                                        $roleColor = 'bg-purple-100 text-purple-800 border border-purple-200';
+                                    }
+                                @endphp
+                                <div class="mt-2">
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-semibold {{ $roleColor }}">
+                                        Peran: {{ $role }}
+                                    </span>
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                                 {{ $jadwal->jadwalSidang->waktu_sidang->format('d M Y, H:i') }}<br>
@@ -104,21 +144,35 @@
                                 </div>
                                 @endif
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap">
-                                @if($jadwal->nilai !== null)
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">Sudah Dinilai ({{ $jadwal->nilai }})</span>
-                                @else
+                            <td class="px-6 py-4 whitespace-nowrap" id="status-col-{{ $jadwal->id }}">
+                                @php $hasSaved = $jadwal->nilai !== null; @endphp
+                                <div id="preview-container-{{ $jadwal->id }}" class="flex flex-col gap-1 {{ $hasSaved ? '' : 'hidden' }}">
+                                    <span id="skor-badge-{{ $jadwal->id }}" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium {{ $hasSaved ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800' }} w-fit mb-1">
+                                        Skor: <span id="skor-val-{{ $jadwal->id }}" class="ml-1">{{ $jadwal->nilai }}</span> 
+                                        <span id="preview-label-{{ $jadwal->id }}" class="ml-1 italic {{ $hasSaved ? 'hidden' : '' }}">(Belum Disimpan)</span>
+                                    </span>
+                                    <div class="text-[11px] text-gray-600 space-y-0.5 bg-gray-50 p-2 rounded border border-gray-100">
+                                        <div class="flex justify-between gap-4"><span class="text-gray-500">Huruf:</span> <span id="huruf-val-{{ $jadwal->id }}" class="font-bold text-gray-800">{{ $jadwal->nilai_huruf ?? '-' }}</span></div>
+                                        <div class="flex justify-between gap-4"><span class="text-gray-500">Angka:</span> <span id="angka-val-{{ $jadwal->id }}" class="font-bold text-gray-800">{{ $jadwal->nilai_angka ?? '-' }}</span></div>
+                                        <div class="flex justify-between gap-4"><span class="text-gray-500">Mutu:</span> <span id="mutu-val-{{ $jadwal->id }}" class="font-semibold text-emerald-700">{{ $jadwal->derajat_mutu ?? '-' }}</span></div>
+                                    </div>
+                                </div>
+                                <div id="default-badge-{{ $jadwal->id }}" class="{{ $hasSaved ? 'hidden' : '' }}">
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">Belum Dinilai</span>
-                                @endif
+                                </div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                <form action="{{ route('dosen.nilai.store', $jadwal->id) }}" method="POST" class="flex items-center justify-end space-x-2">
+                                <form action="{{ route('dosen.nilai.store', $jadwal->id) }}" method="POST" class="flex items-center justify-end gap-3">
                                     @csrf
-                                    <input type="number" name="nilai" min="1" max="100" placeholder="0-100" required value="{{ $jadwal->nilai }}"
-                                        class="w-20 px-3 py-1.5 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
-                                    <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg text-sm transition-colors shadow-sm">
-                                        Simpan
-                                    </button>
+                                    <div class="flex items-center space-x-2">
+                                        <input type="number" name="nilai" min="1" max="100" placeholder="0-100" required value="{{ $jadwal->nilai }}" step="0.01"
+                                            class="nilai-input w-20 px-3 py-1.5 text-sm rounded-lg border border-gray-300 focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+                                            data-id="{{ $jadwal->id }}" data-saved="{{ $jadwal->nilai ?? '' }}"
+                                            oninput="updateConversion(this)">
+                                        <button type="submit" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-1.5 rounded-lg text-sm transition-colors shadow-sm">
+                                            Simpan
+                                        </button>
+                                    </div>
                                 </form>
                             </td>
                         </tr>
@@ -142,5 +196,68 @@
             &copy; 2026 Sistem Penilaian Ujian Sidang. By @ ViruzLab. Version 1.0.2. All rights reserved.
         </div>
     </footer>
+
+    <script>
+        function updateConversion(input) {
+            const val = parseFloat(input.value);
+            const id = input.getAttribute('data-id');
+            const savedVal = input.getAttribute('data-saved');
+            
+            const previewContainer = document.getElementById('preview-container-' + id);
+            const defaultBadge = document.getElementById('default-badge-' + id);
+            
+            const skorBadge = document.getElementById('skor-badge-' + id);
+            const skorVal = document.getElementById('skor-val-' + id);
+            const previewLabel = document.getElementById('preview-label-' + id);
+            
+            const hurufVal = document.getElementById('huruf-val-' + id);
+            const angkaVal = document.getElementById('angka-val-' + id);
+            const mutuVal = document.getElementById('mutu-val-' + id);
+            
+            if (isNaN(val)) {
+                if (savedVal === '') {
+                    previewContainer.classList.add('hidden');
+                    defaultBadge.classList.remove('hidden');
+                } else {
+                    // Revert to saved value if input is cleared
+                    input.value = savedVal;
+                    updateConversion(input);
+                }
+                return;
+            }
+            
+            previewContainer.classList.remove('hidden');
+            defaultBadge.classList.add('hidden');
+            
+            let huruf = 'E';
+            let angka = '<1,0';
+            let mutu = 'Gagal';
+            
+            if (val >= 92) { huruf = 'A'; angka = '4,0'; mutu = 'Istimewa'; }
+            else if (val >= 86) { huruf = 'A-'; angka = '3,7'; mutu = 'Hampir Istimewa'; }
+            else if (val >= 81) { huruf = 'B+'; angka = '3,4'; mutu = 'Baik Sekali'; }
+            else if (val >= 76) { huruf = 'B'; angka = '3,0'; mutu = 'Baik'; }
+            else if (val >= 71) { huruf = 'B-'; angka = '2,7'; mutu = 'Cukup Baik'; }
+            else if (val >= 66) { huruf = 'C+'; angka = '2,4'; mutu = 'Lebih dari Cukup'; }
+            else if (val >= 60) { huruf = 'C'; angka = '2,0'; mutu = 'Cukup'; }
+            else if (val >= 55) { huruf = 'D'; angka = '1,0'; mutu = 'Kurang'; }
+            
+            skorVal.innerText = val;
+            hurufVal.innerText = huruf;
+            angkaVal.innerText = angka;
+            mutuVal.innerText = mutu;
+            
+            // Highlight if it's different from saved value
+            if (val.toString() !== savedVal) {
+                skorBadge.classList.remove('bg-green-100', 'text-green-800');
+                skorBadge.classList.add('bg-blue-100', 'text-blue-800');
+                previewLabel.classList.remove('hidden');
+            } else {
+                skorBadge.classList.add('bg-green-100', 'text-green-800');
+                skorBadge.classList.remove('bg-blue-100', 'text-blue-800');
+                previewLabel.classList.add('hidden');
+            }
+        }
+    </script>
 </body>
 </html>
