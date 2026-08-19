@@ -278,7 +278,7 @@
             display: inline-block;
             text-align: left;
             position: relative;
-            margin-right: 50px; /* Geser keseluruhan blok ke kiri */
+            margin-right: 80px; /* Geser keseluruhan blok lebih ke kiri */
         }
 
         .ttd-box .jabatan {
