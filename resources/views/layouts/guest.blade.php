@@ -57,7 +57,13 @@
 
             <div class="absolute bottom-8 text-center text-xs text-gray-400 font-medium tracking-wide">
                 <p class="text-xs">
-                    &copy; {{ date('Y') }} Sistem Penilaian Ujian Sidang. By @ ViruzLab. Version 1.0.{{ trim(exec('git rev-list --count HEAD')) ?: '2' }}. All rights reserved.
+                    @php
+                        $commitCount = '2';
+                        if(file_exists(base_path('.git/logs/HEAD'))) {
+                            $commitCount = count(file(base_path('.git/logs/HEAD')));
+                        }
+                    @endphp
+                    &copy; {{ date('Y') }} Sistem Penilaian Ujian Sidang. By @ ViruzLab. Version 1.0.{{ $commitCount }}. All rights reserved.
                 </p>
             </div>
         </div>
