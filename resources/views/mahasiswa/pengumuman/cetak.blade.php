@@ -59,7 +59,7 @@
             justify-content: center;
             border-bottom: 4px solid #000;
             padding-bottom: 8px;
-            margin-bottom: 15px;
+            margin-bottom: 10px; /* Diperkecil dari 15px */
             gap: 2px;
         }
 
@@ -117,7 +117,7 @@
         /* ========== JUDUL ========== */
         .title {
             text-align: center;
-            margin: 20px 0 8px 0;
+            margin: 15px 0 8px 0; /* Diperkecil dari 20px */
         }
 
         .title h2 {
@@ -132,15 +132,14 @@
             font-size: 12pt;
         }
 
-        /* ========== BODY ========== */
+        /* ========== KONTEN ========== */
         .body-text {
-            margin-top: 18px;
             text-align: justify;
         }
 
         .body-text p {
-            margin-bottom: 6px;
             text-indent: 0;
+            margin-bottom: 8px;
         }
 
         .data-mhs {
@@ -166,6 +165,12 @@
             text-align: center;
         }
 
+        /* ========== DATA MHS ========== */
+        .data-mahasiswa {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
         /* ========== SYARAT LIST ========== */
         .syarat-list {
             margin: 6px 0 8px 55px;
@@ -184,7 +189,7 @@
 
         /* ========== STATUS BOX ========== */
         .status-box {
-            margin: 15px auto;
+            margin: 10px auto;
             width: 75%;
             border: 2px solid #000;
         }
@@ -198,7 +203,7 @@
             text-align: center;
             font-weight: bold;
             font-size: 14pt;
-            padding: 10px 8px;
+            padding: 8px 8px;
             position: relative;
         }
 
@@ -208,12 +213,15 @@
 
 
 
-        /* ========== LULUSAN INFO BOX ========== */
+        /* ========== KELULUSAN BOX ========== */
+        .kelulusan-container {
+            margin: 0 auto 10px auto;
+            max-width: 480px;
+        }
+
         .lulusan-box {
-            margin: 15px auto;
-            width: 75%;
             border: 2px solid #000;
-            padding: 10px 15px;
+            padding: 8px 15px;
             text-align: center;
         }
 
@@ -267,11 +275,11 @@
             text-align: left;
             position: relative;
             margin-right: 80px;
-            margin-top: 25px;
+            margin-top: 15px; /* Diperkecil dari 25px */
         }
 
         .ttd-box .jabatan {
-            margin-bottom: 50px;
+            margin-bottom: 40px; /* Diperkecil dari 50px */
         }
 
         .ttd-box .ttd-img img {
