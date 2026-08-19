@@ -59,7 +59,7 @@
             justify-content: center;
             border-bottom: 4px solid #000;
             padding-bottom: 8px;
-            margin-bottom: 10px; /* Diperkecil dari 15px */
+            margin-bottom: 8px; /* Diperkecil lagi */
             gap: 2px;
         }
 
@@ -117,7 +117,7 @@
         /* ========== JUDUL ========== */
         .title {
             text-align: center;
-            margin: 15px 0 8px 0; /* Diperkecil dari 20px */
+            margin: 10px 0 6px 0; /* Diperkecil lagi */
         }
 
         .title h2 {
@@ -189,7 +189,7 @@
 
         /* ========== STATUS BOX ========== */
         .status-box {
-            margin: 10px auto;
+            margin: 8px auto; /* Diperkecil lagi */
             width: 75%;
             border: 2px solid #000;
         }
@@ -213,7 +213,7 @@
 
         /* ========== KELULUSAN BOX ========== */
         .kelulusan-container {
-            margin: 0 auto 10px auto;
+            margin: 0 auto 8px auto; /* Diperkecil lagi */
             max-width: 480px;
         }
 
@@ -273,11 +273,11 @@
             text-align: left;
             position: relative;
             margin-right: 80px;
-            margin-top: 15px; /* Diperkecil dari 25px */
+            margin-top: 10px; /* Diperkecil lagi */
         }
 
         .ttd-box .jabatan {
-            margin-bottom: 40px; /* Diperkecil dari 50px */
+            margin-bottom: 35px; /* Diperkecil lagi */
         }
 
         .ttd-box .ttd-img img {
@@ -293,7 +293,7 @@
             clear: both;
             position: relative;
             top: -24px;
-            margin-bottom: -24px;
+            margin-bottom: -35px; /* Diberi margin negatif ekstra agar tidak memicu halaman baru */
         }
 
         .catatan-box p {
