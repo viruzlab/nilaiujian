@@ -231,6 +231,10 @@ class JadwalSidangController extends Controller
     {
         $jadwal->load(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen']);
 
+        if (!$jadwal->isNilaiLengkap()) {
+            return back()->with('error', 'Gagal mencetak yudisium. Terdapat dosen yang belum memasukkan nilai untuk mahasiswa ini.');
+        }
+
         $ns = $jadwal->getNilaiSidangAkhir();
         $bobot = JadwalSidang::konversiBobot($ns) ?? 0;
         $jumlahMutuMhs = floatval(optional($jadwal->mahasiswa)->jumlah_mutu ?? 0);
@@ -262,9 +266,10 @@ class JadwalSidangController extends Controller
             ->search($jadwal->id);
             
         $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
+        $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
 
         return view('admin.jadwal.cetak-yudisium', compact(
-            'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus', 'nomorSurat'
+            'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus', 'nomorSurat', 'lulusanKe'
         ));
     }
 }

@@ -330,7 +330,7 @@
             gap: 8px;
         }
 
-        .print-bar button {
+        .print-bar button, .print-bar a {
             border: none;
             padding: 9px 22px;
             border-radius: 8px;
@@ -339,6 +339,8 @@
             font-size: 13px;
             font-family: 'Segoe UI', system-ui, sans-serif;
             transition: all 0.2s;
+            text-decoration: none;
+            display: inline-block;
         }
 
         .print-bar .btn-print {
@@ -371,7 +373,7 @@
         </div>
         <div class="btn-group">
             <button class="btn-print" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
-            <button class="btn-close" onclick="window.close()">✕ Tutup</button>
+            <a href="{{ route('mahasiswa.pengumuman.index') }}" class="btn-close">Kembali ke Pencarian</a>
         </div>
     </div>
 

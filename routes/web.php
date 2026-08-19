@@ -35,4 +35,9 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('jadwal', \App\Http\Controllers\Admin\JadwalSidangController::class);
 });
 
+// Route untuk Mahasiswa (Publik)
+Route::get('/pengumuman-yudisium', [\App\Http\Controllers\Mahasiswa\PengumumanController::class, 'index'])->name('mahasiswa.pengumuman.index');
+Route::post('/pengumuman-yudisium', [\App\Http\Controllers\Mahasiswa\PengumumanController::class, 'cari'])->name('mahasiswa.pengumuman.cari');
+Route::get('/pengumuman-yudisium/download/{id}', [\App\Http\Controllers\Mahasiswa\PengumumanController::class, 'download'])->name('mahasiswa.pengumuman.download');
+
 require __DIR__.'/auth.php';

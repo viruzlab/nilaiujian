@@ -102,6 +102,18 @@ class JadwalSidang extends Model
         return null;
     }
 
+    public function isNilaiLengkap()
+    {
+        if ($this->nilaiSidangs->isEmpty()) return false;
+        
+        foreach ($this->nilaiSidangs as $ns) {
+            if ($ns->nilai === null) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static function konversiHuruf($nilai)
     {
         if ($nilai === null || $nilai === '-') return '-';
