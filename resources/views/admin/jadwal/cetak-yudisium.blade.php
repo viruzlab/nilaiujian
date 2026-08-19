@@ -129,7 +129,7 @@
         }
 
         .title .nomor {
-            font-size: 10pt;
+            font-size: 12pt;
         }
 
         /* ========== BODY ========== */
@@ -395,7 +395,7 @@
         <!-- ===== JUDUL ===== -->
         <div class="title">
             <h2>PENGUMUMAN YUDISIUM</h2>
-            <div class="nomor">Nomor: ......./UN40_A7.5.7/PK.03.06/{{ date('Y') }}</div>
+            <div class="nomor">Nomor: {{ $nomorSurat }}/UN40.A7.5.7/PK.03.06/{{ date('Y') }}</div>
         </div>
 
         <!-- ===== ISI SURAT ===== -->

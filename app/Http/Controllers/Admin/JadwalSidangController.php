@@ -255,8 +255,16 @@ class JadwalSidangController extends Controller
             $isLulus = $nilaiAkhirAngka >= 2.0;
         }
 
+        $urutan = JadwalSidang::orderBy('kelompok_ujian', 'asc')
+            ->orderBy('waktu_sidang', 'asc')
+            ->orderBy('id', 'asc')
+            ->pluck('id')
+            ->search($jadwal->id);
+            
+        $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
+
         return view('admin.jadwal.cetak-yudisium', compact(
-            'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus'
+            'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus', 'nomorSurat'
         ));
     }
 }
