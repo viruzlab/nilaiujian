@@ -38,7 +38,13 @@ class JadwalSidangController extends Controller
     {
         $mahasiswas = Mahasiswa::all();
         $dosens = Dosen::all();
-        return view('admin.jadwal.create', compact('mahasiswas', 'dosens'));
+        $kelompoks = JadwalSidang::select('kelompok_ujian')
+            ->whereNotNull('kelompok_ujian')
+            ->distinct()
+            ->orderBy('kelompok_ujian')
+            ->pluck('kelompok_ujian');
+            
+        return view('admin.jadwal.create', compact('mahasiswas', 'dosens', 'kelompoks'));
     }
 
     public function store(Request $request)
@@ -47,6 +53,7 @@ class JadwalSidangController extends Controller
             'mahasiswa_id' => 'required|exists:mahasiswas,id',
             'waktu_sidang' => 'required|date',
             'ruangan' => 'nullable|string|max:255',
+            'kelompok_ujian' => 'nullable|string|max:255',
             'dosen_ids' => 'required|array|min:1',
             'dosen_ids.*' => 'exists:dosens,id',
         ]);
@@ -55,6 +62,7 @@ class JadwalSidangController extends Controller
             'mahasiswa_id' => $request->mahasiswa_id,
             'waktu_sidang' => $request->waktu_sidang,
             'ruangan' => $request->ruangan,
+            'kelompok_ujian' => $request->kelompok_ujian,
         ]);
 
         // Create NilaiSidang record for selected dosen penguji AND pembimbing 1 & 2
@@ -78,6 +86,11 @@ class JadwalSidangController extends Controller
     {
         $mahasiswas = Mahasiswa::all();
         $dosens = Dosen::all();
+        $kelompoks = JadwalSidang::select('kelompok_ujian')
+            ->whereNotNull('kelompok_ujian')
+            ->distinct()
+            ->orderBy('kelompok_ujian')
+            ->pluck('kelompok_ujian');
         
         $mhs = $jadwal->mahasiswa;
         $pembimbingIds = array_filter([$mhs->pembimbing_1_id, $mhs->pembimbing_2_id]);
@@ -87,7 +100,7 @@ class JadwalSidangController extends Controller
             ->pluck('dosen_id')
             ->toArray();
 
-        return view('admin.jadwal.edit', compact('jadwal', 'mahasiswas', 'dosens', 'selectedPengujiIds'));
+        return view('admin.jadwal.edit', compact('jadwal', 'mahasiswas', 'dosens', 'selectedPengujiIds', 'kelompoks'));
     }
 
     public function update(Request $request, JadwalSidang $jadwal)
@@ -96,6 +109,7 @@ class JadwalSidangController extends Controller
             'mahasiswa_id' => 'required|exists:mahasiswas,id',
             'waktu_sidang' => 'required|date',
             'ruangan' => 'nullable|string|max:255',
+            'kelompok_ujian' => 'nullable|string|max:255',
             'dosen_ids' => 'required|array|min:1',
             'dosen_ids.*' => 'exists:dosens,id',
         ]);
@@ -104,6 +118,7 @@ class JadwalSidangController extends Controller
             'mahasiswa_id' => $request->mahasiswa_id,
             'waktu_sidang' => $request->waktu_sidang,
             'ruangan' => $request->ruangan,
+            'kelompok_ujian' => $request->kelompok_ujian,
         ]);
 
         // Sync NilaiSidang
