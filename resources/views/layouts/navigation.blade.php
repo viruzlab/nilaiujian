@@ -28,6 +28,9 @@
                     <x-nav-link :href="route('admin.jadwal.rekap')" :active="request()->routeIs('admin.jadwal.rekap')">
                         {{ __('Rekap Nilai') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('admin.jadwal.pengumuman')" :active="request()->routeIs('admin.jadwal.pengumuman')">
+                        {{ __('Pengumuman') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -87,6 +90,12 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('admin.jadwal.index')" :active="request()->routeIs('admin.jadwal.*')">
                 {{ __('Jadwal Sidang') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.jadwal.rekap')" :active="request()->routeIs('admin.jadwal.rekap')">
+                {{ __('Rekap Nilai') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('admin.jadwal.pengumuman')" :active="request()->routeIs('admin.jadwal.pengumuman')">
+                {{ __('Pengumuman') }}
             </x-responsive-nav-link>
         </div>
 

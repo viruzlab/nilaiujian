@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengumuman Yudisium - {{ optional($jadwal->mahasiswa)->nama }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        @page {
+            size: A4;
+            margin: 1cm 18mm 12mm 18mm;
+        }
+
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            font-size: 12pt;
+            color: #000;
+            background: #e5e7eb;
+            line-height: 1.5;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 60px auto 20px;
+            background: white;
+            padding: 1cm 18mm 12mm 18mm;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .page {
+                box-shadow: none;
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                min-height: auto;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        /* ========== KOP SURAT ========== */
+        .kop-surat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 4px solid #000;
+            padding-bottom: 8px;
+            margin-bottom: 15px;
+            gap: 2px;
+        }
+
+        .kop-logo {
+            flex-shrink: 0;
+        }
+
+        .kop-logo img {
+            height: 3cm;
+            width: 3cm;
+            object-fit: contain;
+        }
+
+        .kop-text {
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .kop-text .line1 {
+            font-size: 14pt;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        .kop-text .line2 {
+            font-size: 14pt;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .kop-text .line3 {
+            font-size: 14pt;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .kop-text .line4 {
+            font-size: 14pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .kop-text .line5 {
+            font-size: 12pt;
+            margin-top: 1px;
+            white-space: nowrap;
+        }
+
+        .kop-text .line6 {
+            font-size: 12pt;
+            white-space: nowrap;
+        }
+
+        /* ========== JUDUL ========== */
+        .title {
+            text-align: center;
+            margin: 20px 0 8px 0;
+        }
+
+        .title h2 {
+            font-size: 14pt;
+            font-weight: bold;
+            text-decoration: underline;
+            letter-spacing: 2px;
+            margin-bottom: 3px;
+        }
+
+        .title .nomor {
+            font-size: 10pt;
+        }
+
+        /* ========== BODY ========== */
+        .body-text {
+            margin-top: 18px;
+            text-align: justify;
+        }
+
+        .body-text p {
+            margin-bottom: 6px;
+            text-indent: 40px;
+        }
+
+        .data-mhs {
+            margin: 8px 0 8px 30px;
+        }
+
+        .data-mhs table {
+            border-collapse: collapse;
+        }
+
+        .data-mhs table td {
+            padding: 1px 5px;
+            vertical-align: top;
+            font-size: 12pt;
+        }
+
+        .data-mhs table td:first-child {
+            width: 120px;
+        }
+
+        .data-mhs table td:nth-child(2) {
+            width: 12px;
+            text-align: center;
+        }
+
+        /* ========== SYARAT LIST ========== */
+        .syarat-list {
+            margin: 6px 0 8px 55px;
+            line-height: 1.5;
+        }
+
+        .syarat-list li {
+            margin-bottom: 1px;
+            padding-left: 5px;
+        }
+
+        .dinyatakan {
+            text-indent: 0 !important;
+            font-style: italic;
+            margin-top: 8px !important;
+        }
+
+        /* ========== STATUS BOX ========== */
+        .status-box {
+            margin: 15px auto;
+            width: 75%;
+            border: 2px solid #000;
+        }
+
+        .status-row {
+            display: flex;
+        }
+
+        .status-cell {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            font-size: 14pt;
+            padding: 10px 8px;
+            position: relative;
+        }
+
+        .status-cell:first-child {
+            border-right: 2px solid #000;
+        }
+
+        .status-cell.active {
+            background: #f0f0f0;
+        }
+
+        .status-cell .check {
+            font-size: 22pt;
+            vertical-align: middle;
+            margin-left: 5px;
+        }
+
+        /* ========== LULUSAN INFO BOX ========== */
+        .lulusan-box {
+            margin: 15px auto;
+            width: 75%;
+            border: 2px solid #000;
+            padding: 10px 15px;
+            text-align: center;
+        }
+
+        .lulusan-box .lulusan-title {
+            font-size: 10pt;
+            margin-bottom: 8px;
+        }
+
+        .lulusan-box .ipk-row {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 5px;
+        }
+
+        .lulusan-box .ipk-item {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+        }
+
+        .lulusan-box .ipk-label {
+            font-size: 11pt;
+        }
+
+        .lulusan-box .ipk-colon {
+            font-weight: bold;
+        }
+
+        .lulusan-box .ipk-value {
+            font-size: 16pt;
+            font-weight: bold;
+        }
+
+        /* ========== PENUTUP ========== */
+        .penutup {
+            margin-top: 12px;
+            text-align: justify;
+            font-style: italic;
+            font-size: 10pt;
+            line-height: 1.5;
+        }
+
+        .penutup p {
+            text-indent: 40px;
+            margin-bottom: 4px;
+        }
+
+        /* ========== TTD ========== */
+        .ttd-area {
+            margin-top: 25px;
+            text-align: right;
+            padding-right: 20px;
+        }
+
+        .ttd-area .jabatan {
+            margin-bottom: 55px;
+        }
+
+        .ttd-area .nama-ttd {
+            text-decoration: underline;
+            font-weight: bold;
+        }
+
+        .ttd-area .nip {
+            font-size: 10pt;
+        }
+
+        /* ========== CATATAN ========== */
+        .catatan {
+            margin-top: 20px;
+            border-top: 1px solid #aaa;
+            padding-top: 6px;
+            font-size: 8.5pt;
+            color: #444;
+        }
+
+        .catatan p {
+            margin-bottom: 1px;
+        }
+
+        /* ========== PRINT BAR ========== */
+        .print-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #059669, #047857);
+            padding: 10px 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 999;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.25);
+        }
+
+        .print-bar .info {
+            color: white;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            font-size: 14px;
+        }
+
+        .print-bar .btn-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .print-bar button {
+            border: none;
+            padding: 9px 22px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            transition: all 0.2s;
+        }
+
+        .print-bar .btn-print {
+            background: white;
+            color: #059669;
+        }
+
+        .print-bar .btn-print:hover {
+            background: #ecfdf5;
+            transform: translateY(-1px);
+        }
+
+        .print-bar .btn-close {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+        }
+
+        .print-bar .btn-close:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Print Bar -->
+    <div class="print-bar no-print">
+        <div class="info">
+            <strong>📄 Pengumuman Yudisium</strong> — {{ optional($jadwal->mahasiswa)->nama }}
+            ({{ optional($jadwal->mahasiswa)->nim }})
+        </div>
+        <div class="btn-group">
+            <button class="btn-print" onclick="window.print()">🖨️ Cetak / Simpan PDF</button>
+            <button class="btn-close" onclick="window.close()">✕ Tutup</button>
+        </div>
+    </div>
+
+    <div class="page">
+
+        <!-- ===== KOP SURAT ===== -->
+        <div class="kop-surat">
+            <div class="kop-logo">
+                <img src="{{ asset('images/logoupi.png') }}" alt="Logo UPI">
+            </div>
+            <div class="kop-text">
+                <div class="line1">KEMENTERIAN PENDIDIKAN TINGGI, SAINS, DAN TEKNOLOGI</div>
+                <div class="line2">UNIVERSITAS PENDIDIKAN INDONESIA</div>
+                <div class="line3">FAKULTAS PENDIDIKAN EKONOMI DAN BISNIS</div>
+                <div class="line4">PROGRAM STUDI ILMU EKONOMI DAN KEUANGAN ISLAM</div>
+                <div class="line5">Jalan Dr. Setiabudhi No.229 Bandung 40154</div>
+                <div class="line6">Laman http://ieki.upi.edu; surel/e-mail: ieki@upi.edu</div>
+            </div>
+        </div>
+
+        <!-- ===== JUDUL ===== -->
+        <div class="title">
+            <h2>PENGUMUMAN YUDISIUM</h2>
+            <div class="nomor">Nomor: ......./UN40_A7.5.7/PK.03.06/{{ date('Y') }}</div>
+        </div>
+
+        <!-- ===== ISI SURAT ===== -->
+        <div class="body-text">
+            <p>Berdasarkan data akademik di Prodi Ilmu Ekonomi dan Keuangan Islam, Fakultas Pendidikan Ekonomi dan
+                Bisnis Universitas Pendidikan Indonesia, mahasiswa berikut:</p>
+
+            <div class="data-mhs">
+                <table>
+                    <tr>
+                        <td>Nama</td>
+                        <td>:</td>
+                        <td><strong>{{ optional($jadwal->mahasiswa)->nama ?? '-' }} /
+                                {{ optional($jadwal->mahasiswa)->nim ?? '-' }}</strong></td>
+                    </tr>
+                    <tr>
+                        <td>Program Studi</td>
+                        <td>:</td>
+                        <td>Ilmu Ekonomi dan Keuangan Islam</td>
+                    </tr>
+                    <tr>
+                        <td>Fakultas</td>
+                        <td>:</td>
+                        <td>Pendidikan Ekonomi dan Bisnis</td>
+                    </tr>
+                </table>
+            </div>
+
+            <p style="text-indent: 0;">Telah memenuhi semua ketentuan akademik pada Program Pendidikan Sarjana di
+                Universitas Pendidikan Indonesia, yaitu:</p>
+
+            <ol class="syarat-list">
+                <li>menyelesaikan seluruh persyaratan administratif.</li>
+                <li>menyelesaikan seluruh persyaratan akademik, termasuk telah menyelesaikan semua mata kuliah;</li>
+                <li>menyelesaikan tugas akhir skripsi dan atau publikasi dalam jurnal yang direkognisi;</li>
+                <li>telah melakukan ujian sidang sarjana.</li>
+            </ol>
+
+            <p class="dinyatakan"><em>Dengan ini dinyatakan:</em></p>
+        </div>
+
+        <!-- ===== STATUS LULUS / TIDAK LULUS ===== -->
+        <div class="status-box">
+            <div class="status-row">
+                <div class="status-cell {{ $isLulus ? 'active' : '' }}">
+                    LULUS
+                    @if ($isLulus)
+                        <span class="check">✔</span>
+                    @endif
+                </div>
+                <div class="status-cell {{ !$isLulus ? 'active' : '' }}">
+                    TIDAK LULUS
+                    @if (!$isLulus)
+                        <span class="check">✔</span>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== LULUSAN INFO ===== -->
+        <div class="lulusan-box">
+            <div class="lulusan-title">Lulusan Program Studi Ilmu Ekonomi dan Keuangan Islam</div>
+            <div class="ipk-row">
+                <div class="ipk-item">
+                    <span class="ipk-label">IPK</span>
+                    <span class="ipk-colon">:</span>
+                    <span class="ipk-value">{{ number_format($nilaiAkhirAngka, 2) }}</span>
+                </div>
+                <div class="ipk-item">
+                    <span class="ipk-label">Predikat</span>
+                    <span class="ipk-colon">:</span>
+                    <span class="ipk-value">{{ $mutuAkhirPredikat }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PENUTUP ===== -->
+        <div class="penutup">
+            <p>Semoga ilmu yang diperoleh saudara akan bermanfaat agar anda menjadi pribadi yang lebih baik. Mampu
+                memberikan kontribusi nyata bagi diri sendiri, keluarga, dan lingkungan baik dalam tataran lokal,
+                regional, nasional, maupun global, khususnya dalam bidang ekonomi, bisnis, dan filantropi Islam.</p>
+            <p>Semoga Allah SWT senantiasa membimbing dan melindungi kita semua.</p>
+        </div>
+
+        <!-- ===== TANDA TANGAN ===== -->
+        <div class="ttd-area">
+            <div class="jabatan">Ketua,</div>
+            <div class="nama-ttd">Aas Nurasyiah</div>
+            <div class="nip">NIP 198406072014042001</div>
+        </div>
+
+        <!-- ===== CATATAN ===== -->
+        <div class="catatan">
+            <p>Catatan:</p>
+            <p>*) Ijazah, transkrip akademik, dan SKPI akan diserahkan pada saat wisuda.</p>
+            <p>*) Surat Keterangan Kelulusan akan dikeluarkan oleh fakultas</p>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -203,4 +203,60 @@ class JadwalSidangController extends Controller
         $fileName = $kelompok ? "Laporan_Nilai_Kelompok_{$kelompok}.xlsx" : "Laporan_Nilai_Semua.xlsx";
         return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\LaporanNilaiExport($kelompok), $fileName);
     }
+
+    public function pengumuman(Request $request)
+    {
+        $kelompokList = JadwalSidang::select('kelompok_ujian')
+            ->whereNotNull('kelompok_ujian')
+            ->distinct()
+            ->orderBy('kelompok_ujian')
+            ->pluck('kelompok_ujian');
+
+        $selectedKelompok = $request->query('kelompok');
+
+        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen'])
+            ->orderBy('kelompok_ujian', 'asc')
+            ->orderBy('waktu_sidang', 'asc');
+
+        if ($selectedKelompok) {
+            $query->where('kelompok_ujian', $selectedKelompok);
+        }
+
+        $jadwals = $query->get();
+
+        return view('admin.jadwal.pengumuman', compact('jadwals', 'kelompokList', 'selectedKelompok'));
+    }
+
+    public function cetakYudisium(JadwalSidang $jadwal)
+    {
+        $jadwal->load(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen']);
+
+        $ns = $jadwal->getNilaiSidangAkhir();
+        $bobot = JadwalSidang::konversiBobot($ns) ?? 0;
+        $jumlahMutuMhs = floatval(optional($jadwal->mahasiswa)->jumlah_mutu ?? 0);
+        $jumlahSksMhs = floatval(optional($jadwal->mahasiswa)->jumlah_sks ?? 0);
+        $nilaiMutuSidang = $ns !== null ? $bobot * 6 : 0;
+
+        $nilaiAkhirAngka = 0;
+        $mutuAkhirPredikat = '-';
+        $isLulus = false;
+
+        if ($jumlahSksMhs > 0) {
+            $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
+            if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
+                $mutuAkhirPredikat = 'Pujian';
+            } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
+                $mutuAkhirPredikat = 'Sangat Memuaskan';
+            } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
+                $mutuAkhirPredikat = 'Memuaskan';
+            } elseif ($nilaiAkhirAngka > 2.0 && $nilaiAkhirAngka <= 2.75) {
+                $mutuAkhirPredikat = 'Tanpa Predikat Kelulusan';
+            }
+            $isLulus = $nilaiAkhirAngka >= 2.0;
+        }
+
+        return view('admin.jadwal.cetak-yudisium', compact(
+            'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus'
+        ));
+    }
 }
