@@ -261,24 +261,13 @@
             margin-bottom: 4px;
         }
 
-        /* ========== FOOTER TABLE ========== */
-        .footer-table {
-            width: 100%;
-            margin-top: 25px;
-            border-collapse: collapse;
-            border: none;
-        }
-
-        .footer-table td {
-            padding: 0;
-            vertical-align: top;
-        }
-
+        /* ========== FOOTER ========== */
         .ttd-box {
-            display: inline-block;
+            float: right;
             text-align: left;
             position: relative;
-            margin-right: 80px; /* Geser keseluruhan blok lebih ke kiri */
+            margin-right: 80px;
+            margin-top: 25px;
         }
 
         .ttd-box .jabatan {
@@ -288,20 +277,22 @@
         .ttd-box .ttd-img img {
             position: absolute;
             top: -10px;
-            left: -30px; /* Digeser sedikit lebih ke kiri */
+            left: -30px;
             width: 170px;
             height: auto;
             z-index: 1;
         }
 
         .catatan-box {
-            margin-top: 98px;
+            clear: both;
+            position: relative;
+            top: -24px;
+            margin-bottom: -24px;
         }
 
         .catatan-box p {
             text-indent: 0;
             margin-bottom: 4px;
-            white-space: nowrap;
         }
 
         /* ========== PRINT BAR ========== */
@@ -475,27 +466,20 @@
         </div>
 
         <!-- ===== FOOTER (CATATAN & TTD) ===== -->
-        <table class="footer-table">
-            <tr>
-                <td style="vertical-align: top;">
-                    <div class="catatan-box">
-                        <p>Catatan:</p>
-                        <p>*) Ijazah, transkrip akademik, dan SKPI akan diserahkan pada saat wisuda.</p>
-                        <p>*) Surat Keterangan Kelulusan akan dikeluarkan oleh fakultas</p>
-                    </div>
-                </td>
-                <td style="text-align: right; vertical-align: top; white-space: nowrap; width: 1%;">
-                    <div class="ttd-box">
-                        <div class="jabatan">Ketua,</div>
-                        <div class="ttd-img">
-                            <img src="{{ asset('images/ttd_ketua.png') }}" alt="Tanda Tangan Ketua">
-                        </div>
-                        <div class="nama-ttd">Aas Nurasyiah</div>
-                        <div class="nip">NIP 198406072014042001</div>
-                    </div>
-                </td>
-            </tr>
-        </table>
+        <div class="ttd-box">
+            <div class="jabatan">Ketua,</div>
+            <div class="ttd-img">
+                <img src="{{ asset('images/ttd_ketua.png') }}" alt="Tanda Tangan Ketua">
+            </div>
+            <div class="nama-ttd">Aas Nurasyiah</div>
+            <div class="nip">NIP 198406072014042001</div>
+        </div>
+
+        <div class="catatan-box">
+            <p>Catatan:</p>
+            <p>*) Ijazah, transkrip akademik, dan SKPI akan diserahkan pada saat wisuda.</p>
+            <p>*) Surat Keterangan Kelulusan akan dikeluarkan oleh fakultas</p>
+        </div>
 
     </div>
 
