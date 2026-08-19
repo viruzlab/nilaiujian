@@ -56,8 +56,9 @@
             {{ $slot }}
 
             <div class="absolute bottom-8 text-center text-xs text-gray-400 font-medium tracking-wide">
-                &copy; {{ date('Y') }} Sistem Penilaian Ujian Sidang. By @ ViruzLab. Version 1.0.2. All rights
-                reserved.
+                <p class="text-xs">
+                    &copy; {{ date('Y') }} Sistem Penilaian Ujian Sidang. By @ ViruzLab. Version 1.0.{{ trim(exec('git rev-list --count HEAD')) ?: '2' }}. All rights reserved.
+                </p>
             </div>
         </div>
     </div>
