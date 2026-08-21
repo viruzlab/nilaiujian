@@ -13,9 +13,12 @@
 
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-                    <div class="flex justify-between items-center mb-4">
-                        <h3 class="text-lg font-semibold">Daftar Mahasiswa</h3>
-                        <div class="flex gap-2 items-center">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
+                        <div class="flex items-center gap-4 w-full sm:w-auto">
+                            <h3 class="text-lg font-semibold whitespace-nowrap">Daftar Mahasiswa</h3>
+                            <input type="text" id="searchInput" placeholder="Cari data (NIM, Nama, dll)..." class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-64 transition-shadow">
+                        </div>
+                        <div class="flex gap-2 items-center w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0">
                             <form action="{{ route('admin.mahasiswa.import') }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-2 m-0" onsubmit="return confirm('Peringatan: Proses ini akan mencari NIM di database dan memperbarui data (IPK, Semester, Mutu, SKS, dll). Lanjutkan update data?');">
                                 @csrf
                                 <input type="file" name="file" accept=".xlsx,.xls,.csv" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" required>
@@ -101,4 +104,24 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            if(searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    const filter = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('tbody tr');
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if(text.includes(filter)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+    </script>
 </x-app-layout>

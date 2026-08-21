@@ -79,22 +79,29 @@
                     </div>
                 </div>
                 
-                {{-- Filter Kelompok Ujian --}}
-                @if(isset($kelompokList) && $kelompokList->isNotEmpty())
-                <div class="flex flex-wrap items-center gap-2">
-                    <span class="text-sm font-semibold text-gray-600 mr-1">Kelompok Ujian:</span>
-                    <a href="{{ route('dosen.dashboard') }}" 
-                       class="px-4 py-1.5 rounded-full text-sm font-medium border transition-all {{ !$selectedKelompok ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600' }}">
-                        Semua
-                    </a>
-                    @foreach($kelompokList as $kel)
-                    <a href="{{ route('dosen.dashboard', ['kelompok' => $kel]) }}" 
-                       class="px-4 py-1.5 rounded-full text-sm font-medium border transition-all {{ $selectedKelompok == $kel ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600' }}">
-                        {{ $kel }}
-                    </a>
-                    @endforeach
+                {{-- Filter Kelompok Ujian dan Pencarian --}}
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    @if(isset($kelompokList) && $kelompokList->isNotEmpty())
+                    <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                        <span class="text-sm font-semibold text-gray-600 mr-1">Kelompok Ujian:</span>
+                        <a href="{{ route('dosen.dashboard') }}" 
+                           class="px-4 py-1.5 rounded-full text-sm font-medium border transition-all {{ !$selectedKelompok ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600' }}">
+                            Semua
+                        </a>
+                        @foreach($kelompokList as $kel)
+                        <a href="{{ route('dosen.dashboard', ['kelompok' => $kel]) }}" 
+                           class="px-4 py-1.5 rounded-full text-sm font-medium border transition-all {{ $selectedKelompok == $kel ? 'bg-emerald-600 text-white border-emerald-600 shadow-md' : 'bg-white text-gray-600 border-gray-300 hover:border-emerald-400 hover:text-emerald-600' }}">
+                            {{ $kel }}
+                        </a>
+                        @endforeach
+                    </div>
+                    @else
+                    <div></div>
+                    @endif
+                    <div class="w-full sm:w-auto">
+                        <input type="text" id="searchInput" placeholder="Cari mahasiswa..." class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-64 transition-shadow">
+                    </div>
                 </div>
-                @endif
             </div>
             
             <div class="overflow-x-auto">
@@ -266,6 +273,25 @@
                 previewLabel.classList.add('hidden');
             }
         }
+        
+        // Search functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('searchInput');
+            if(searchInput) {
+                searchInput.addEventListener('keyup', function() {
+                    const filter = this.value.toLowerCase();
+                    const rows = document.querySelectorAll('tbody tr');
+                    rows.forEach(row => {
+                        const text = row.textContent.toLowerCase();
+                        if(text.includes(filter)) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
     </script>
 </body>
 </html>
