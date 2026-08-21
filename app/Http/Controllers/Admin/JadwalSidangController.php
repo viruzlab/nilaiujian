@@ -280,4 +280,74 @@ class JadwalSidangController extends Controller
             'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus', 'nomorSurat', 'lulusanKe'
         ));
     }
+
+    public function cetakYudisiumMassal(Request $request)
+    {
+        $selectedKelompok = $request->query('kelompok');
+        
+        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen'])
+            ->orderBy('kelompok_ujian', 'asc')
+            ->orderBy('waktu_sidang', 'asc');
+
+        if ($selectedKelompok) {
+            $query->where('kelompok_ujian', $selectedKelompok);
+        }
+
+        $semuaJadwals = $query->get();
+        
+        $jadwalsSiapCetak = [];
+        
+        // Cek satu-satu untuk kalkulasi dan status lengkap
+        foreach ($semuaJadwals as $jadwal) {
+            if ($jadwal->isNilaiLengkap()) {
+                $ns = $jadwal->getNilaiSidangAkhir();
+                $bobot = JadwalSidang::konversiBobot($ns) ?? 0;
+                $jumlahMutuMhs = floatval(optional($jadwal->mahasiswa)->jumlah_mutu ?? 0);
+                $jumlahSksMhs = floatval(optional($jadwal->mahasiswa)->jumlah_sks ?? 0);
+                $nilaiMutuSidang = $ns !== null ? $bobot * 6 : 0;
+
+                $nilaiAkhirAngka = 0;
+                $mutuAkhirPredikat = '-';
+                $isLulus = false;
+
+                if ($jumlahSksMhs > 0) {
+                    $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
+                    if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
+                        $mutuAkhirPredikat = 'Pujian';
+                    } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
+                        $mutuAkhirPredikat = 'Sangat Memuaskan';
+                    } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
+                        $mutuAkhirPredikat = 'Memuaskan';
+                    } elseif ($nilaiAkhirAngka > 2.0 && $nilaiAkhirAngka <= 2.75) {
+                        $mutuAkhirPredikat = 'Tanpa Predikat Kelulusan';
+                    }
+                    $isLulus = $nilaiAkhirAngka >= 2.0;
+                }
+                
+                $urutan = JadwalSidang::orderBy('kelompok_ujian', 'asc')
+                    ->orderBy('waktu_sidang', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->pluck('id')
+                    ->search($jadwal->id);
+                    
+                $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
+                $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
+                
+                $jadwalsSiapCetak[] = [
+                    'jadwal' => $jadwal,
+                    'nilaiAkhirAngka' => $nilaiAkhirAngka,
+                    'mutuAkhirPredikat' => $mutuAkhirPredikat,
+                    'isLulus' => $isLulus,
+                    'nomorSurat' => $nomorSurat,
+                    'lulusanKe' => $lulusanKe,
+                ];
+            }
+        }
+        
+        if (empty($jadwalsSiapCetak)) {
+            return back()->with('error', 'Gagal mencetak. Tidak ada jadwal dengan nilai lengkap pada pilihan tersebut.');
+        }
+
+        return view('admin.jadwal.cetak-yudisium-massal', compact('jadwalsSiapCetak', 'selectedKelompok'));
+    }
 }

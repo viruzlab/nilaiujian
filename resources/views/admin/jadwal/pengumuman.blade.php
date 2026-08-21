@@ -11,7 +11,14 @@
                 <div class="p-6">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                         <h3 class="text-lg font-semibold flex-1 whitespace-nowrap">Daftar Pengumuman Yudisium</h3>
-                        <div class="w-full sm:w-auto">
+                        <div class="flex gap-2 w-full sm:w-auto items-center">
+                            <a href="{{ route('admin.jadwal.cetak-yudisium-massal', ['kelompok' => $selectedKelompok]) }}" target="_blank"
+                                class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors shadow-sm font-medium flex items-center whitespace-nowrap">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                                </svg>
+                                Cetak PDF
+                            </a>
                             <input type="text" id="searchInput" placeholder="Cari mahasiswa..." class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-64 transition-shadow">
                         </div>
                     </div>
