@@ -204,12 +204,22 @@
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                                'Accept': 'application/json'
                             },
                             body: JSON.stringify({ kelompok: kelompok })
                         });
                         
-                        const initData = await initResponse.json();
+                        let initData;
+                        try {
+                            initData = await initResponse.json();
+                        } catch (e) {
+                            const errText = await initResponse.text();
+                            console.error('Server error response:', errText);
+                            alert('Server tidak mengembalikan format JSON yang valid. Silakan cek console (F12) untuk detail error.');
+                            zipModal.classList.add('hidden');
+                            return;
+                        }
                         if (!initData.success) {
                             alert(initData.message);
                             zipModal.classList.add('hidden');
