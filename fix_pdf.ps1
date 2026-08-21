@@ -1,10 +1,12 @@
-﻿<!DOCTYPE html>
+
+$content = @"
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pengumuman Yudisium - {{ optional($jadwal->mahasiswa)->nama }}</title>
+    <title>Pengumuman Yudisium - {{ optional(`$jadwal->mahasiswa)->nama }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         @page { size: A4; margin: 1cm 18mm 12mm 18mm; }
@@ -94,7 +96,7 @@
         <!-- ===== JUDUL ===== -->
         <div class="title">
             <h2>PENGUMUMAN YUDISIUM</h2>
-            <div class="nomor">Nomor: {{ $nomorSurat }}/UN40.A7.5.7/PK.03.06/{{ date('Y') }}</div>
+            <div class="nomor">Nomor: {{ `$nomorSurat }}/UN40.A7.5.7/PK.03.06/{{ date('Y') }}</div>
         </div>
 
         <!-- ===== ISI SURAT ===== -->
@@ -106,7 +108,7 @@
                     <tr>
                         <td>Nama</td>
                         <td>:</td>
-                        <td><strong>{{ optional($jadwal->mahasiswa)->nama ?? '-' }} / {{ optional($jadwal->mahasiswa)->nim ?? '-' }}</strong></td>
+                        <td><strong>{{ optional(`$jadwal->mahasiswa)->nama ?? '-' }} / {{ optional(`$jadwal->mahasiswa)->nim ?? '-' }}</strong></td>
                     </tr>
                     <tr>
                         <td>Program Studi</td>
@@ -137,22 +139,22 @@
         <div class="status-box">
             <table class="status-table">
                 <tr>
-                    <td class="status-cell" style="{{ !$isLulus ? 'text-decoration: line-through;' : '' }}">LULUS</td>
-                    <td class="status-cell" style="{{ $isLulus ? 'text-decoration: line-through;' : '' }}">TIDAK LULUS</td>
+                    <td class="status-cell" style="{{ !`$isLulus ? 'text-decoration: line-through;' : '' }}">LULUS</td>
+                    <td class="status-cell" style="{{ `$isLulus ? 'text-decoration: line-through;' : '' }}">TIDAK LULUS</td>
                 </tr>
             </table>
         </div>
 
         <!-- ===== LULUSAN INFO ===== -->
         <div class="lulusan-box">
-            <div class="lulusan-title">Lulusan Program Studi Ilmu Ekonomi dan Keuangan Islam Ke - <strong>{{ $lulusanKe }}</strong></div>
+            <div class="lulusan-title">Lulusan Program Studi Ilmu Ekonomi dan Keuangan Islam Ke - <strong>{{ `$lulusanKe }}</strong></div>
             <table class="ipk-table">
                 <tr>
                     <td>
-                        <span class="ipk-label">IPK</span> <strong>:</strong> <span class="ipk-value">{{ number_format($nilaiAkhirAngka, 2) }}</span>
+                        <span class="ipk-label">IPK</span> <strong>:</strong> <span class="ipk-value">{{ number_format(`$nilaiAkhirAngka, 2) }}</span>
                     </td>
                     <td>
-                        <span class="ipk-label">Predikat</span> <strong>:</strong> <span class="ipk-value">{{ $mutuAkhirPredikat }}</span>
+                        <span class="ipk-label">Predikat</span> <strong>:</strong> <span class="ipk-value">{{ `$mutuAkhirPredikat }}</span>
                     </td>
                 </tr>
             </table>
@@ -182,3 +184,6 @@
     </div>
 </body>
 </html>
+"@
+Set-Content -Path "resources/views/admin/jadwal/cetak-yudisium-pdf.blade.php" -Value $content -Encoding UTF8
+
