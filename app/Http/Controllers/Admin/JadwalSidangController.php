@@ -259,7 +259,18 @@ class JadwalSidangController extends Controller
         if ($jumlahSksMhs > 0) {
             $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
             if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
-                $mutuAkhirPredikat = 'Pujian';
+                $mhs = $jadwal->mahasiswa;
+                $semester = $mhs ? $mhs->semester : null;
+                $mataKuliahUlang = $mhs ? (bool) $mhs->mata_kuliah_ulang : false;
+                $nilaiSidangAngka = floatval($ns);
+
+                $syaratSemester = ($semester === null || $semester <= 8);
+                
+                if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
+                    $mutuAkhirPredikat = 'Pujian';
+                } else {
+                    $mutuAkhirPredikat = 'Sangat Memuaskan';
+                }
             } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
                 $mutuAkhirPredikat = 'Sangat Memuaskan';
             } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
@@ -316,7 +327,18 @@ class JadwalSidangController extends Controller
                 if ($jumlahSksMhs > 0) {
                     $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
                     if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
-                        $mutuAkhirPredikat = 'Pujian';
+                        $mhs = $jadwal->mahasiswa;
+                        $semester = $mhs ? $mhs->semester : null;
+                        $mataKuliahUlang = $mhs ? (bool) $mhs->mata_kuliah_ulang : false;
+                        $nilaiSidangAngka = floatval($ns);
+
+                        $syaratSemester = ($semester === null || $semester <= 8);
+                        
+                        if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
+                            $mutuAkhirPredikat = 'Pujian';
+                        } else {
+                            $mutuAkhirPredikat = 'Sangat Memuaskan';
+                        }
                     } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
                         $mutuAkhirPredikat = 'Sangat Memuaskan';
                     } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
@@ -385,7 +407,18 @@ class JadwalSidangController extends Controller
                 if ($jumlahSksMhs > 0) {
                     $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
                     if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
-                        $mutuAkhirPredikat = 'Pujian';
+                        $mhs = $jadwal->mahasiswa;
+                        $semester = $mhs ? $mhs->semester : null;
+                        $mataKuliahUlang = $mhs ? (bool) $mhs->mata_kuliah_ulang : false;
+                        $nilaiSidangAngka = floatval($ns);
+
+                        $syaratSemester = ($semester === null || $semester <= 8);
+                        
+                        if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
+                            $mutuAkhirPredikat = 'Pujian';
+                        } else {
+                            $mutuAkhirPredikat = 'Sangat Memuaskan';
+                        }
                     } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
                         $mutuAkhirPredikat = 'Sangat Memuaskan';
                     } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
@@ -435,18 +468,29 @@ class JadwalSidangController extends Controller
                     $mhsNama = preg_replace('/[^A-Za-z0-9\-]/', '_', optional($data['jadwal']->mahasiswa)->nama ?? 'Mahasiswa');
                     $mhsNim = optional($data['jadwal']->mahasiswa)->nim ?? '0000';
                     $pdfFileName = $mhsNim . '_' . $mhsNama . '.pdf';
+                    $output = $pdf->output();
+                    if (empty($output)) {
+                        return back()->with('error', 'Gagal memproses PDF untuk mahasiswa: ' . $mhsNama . '. Modul PDF mungkin bermasalah (coba cek logo/gambar).');
+                    }
                     
-                    $zip->addFromString($pdfFileName, $pdf->output());
+                    $zip->addFromString($pdfFileName, $output);
                 }
                 
-                $zip->close();
+                $closeResult = $zip->close();
+                if (!$closeResult) {
+                    return back()->with('error', 'Gagal menyimpan file ZIP di server. Izin folder tidak mencukupi.');
+                }
             } else {
                 return back()->with('error', 'Gagal membuka file ZIP untuk ditulis. Pastikan ekstensi zip aktif.');
             }
 
-            return response()->download($zipPath)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
-            if (file_exists($zipPath)) {
+            while (ob_get_level() > 0) {
+                ob_end_clean();
+            }
+
+            return response()->download($zipPath);
+        } catch (\Throwable $e) {
+            if (isset($zipPath) && file_exists($zipPath)) {
                 @unlink($zipPath);
             }
             return back()->with('error', 'Terjadi kesalahan saat memproses PDF/ZIP: ' . $e->getMessage());

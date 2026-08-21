@@ -132,7 +132,18 @@
                                         if ($jumlahSksMhs > 0) {
                                             $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
                                             if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
-                                                $mutuAkhirPredikat = 'Pujian/Cumlaude';
+                                                $mhs = $jadwal->mahasiswa;
+                                                $semester = $mhs ? $mhs->semester : null;
+                                                $mataKuliahUlang = $mhs ? (bool) $mhs->mata_kuliah_ulang : false;
+                                                $nilaiSidangAngka = floatval($ns);
+
+                                                $syaratSemester = ($semester === null || $semester <= 8);
+                                                
+                                                if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
+                                                    $mutuAkhirPredikat = 'Pujian/Cumlaude';
+                                                } else {
+                                                    $mutuAkhirPredikat = 'Sangat memuaskan';
+                                                }
                                             } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
                                                 $mutuAkhirPredikat = 'Sangat memuaskan';
                                             } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {

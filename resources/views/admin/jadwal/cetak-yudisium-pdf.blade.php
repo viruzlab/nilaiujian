@@ -34,7 +34,10 @@
         }
 
         /* ========== KOP SURAT ========== */
+    </style>
+</head>
 
+<body>
     <div class="page">
 
         <!-- ===== KOP SURAT ===== -->
