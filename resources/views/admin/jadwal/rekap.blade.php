@@ -140,7 +140,7 @@
                                                 $syaratSemester = ($semester === null || $semester <= 8);
                                                 
                                                 if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
-                                                    $mutuAkhirPredikat = 'Pujian/Cumlaude';
+                                                    $mutuAkhirPredikat = 'Pujian/Cum Laude';
                                                 } else {
                                                     $mutuAkhirPredikat = 'Sangat memuaskan';
                                                 }

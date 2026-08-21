@@ -82,7 +82,7 @@
                                                 $syaratSemester = ($semester === null || $semester <= 8);
                                                 
                                                 if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
-                                                    $mutuAkhirPredikat = 'Pujian';
+                                                    $mutuAkhirPredikat = 'Pujian/Cum Laude';
                                                 } else {
                                                     $mutuAkhirPredikat = 'Sangat Memuaskan';
                                                 }
@@ -106,7 +106,7 @@
                                         </td>
                                         <td class="px-4 py-3 text-sm text-gray-600 border text-center">{{ optional($jadwal->mahasiswa)->nim ?? '-' }}</td>
                                         <td class="px-4 py-3 text-sm font-bold text-gray-900 border text-center">{{ $nilaiAkhirFormat }}</td>
-                                        <td class="px-4 py-3 text-sm font-semibold border text-center {{ $mutuAkhirPredikat === 'Pujian' ? 'text-emerald-600' : 'text-gray-700' }}">
+                                        <td class="px-4 py-3 text-sm font-semibold border text-center {{ $mutuAkhirPredikat === 'Pujian/Cum Laude' ? 'text-emerald-600' : 'text-gray-700' }}">
                                             {{ $mutuAkhirPredikat }}
                                         </td>
                                         <td class="px-4 py-3 text-sm border text-center">

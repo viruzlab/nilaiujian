@@ -72,7 +72,7 @@ class PengumumanController extends Controller
                 $syaratSemester = ($semester === null || $semester <= 8);
                 
                 if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
-                    $mutuAkhirPredikat = 'Pujian';
+                    $mutuAkhirPredikat = 'Pujian/Cum Laude';
                 } else {
                     $mutuAkhirPredikat = 'Sangat Memuaskan';
                 }
