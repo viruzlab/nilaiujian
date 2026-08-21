@@ -200,7 +200,7 @@
                         zipProgressText.textContent = 'Menginisialisasi file ZIP...';
                         zipProgressBar.style.width = '5%';
                         
-                        const initResponse = await fetch('{{ route('admin.jadwal.zip-init') }}', {
+                        const initResponse = await fetch('{{ route('admin.jadwal.zip-init', [], false) }}', {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -236,7 +236,7 @@
                             const percent = Math.round(((i) / total) * 100);
                             zipProgressBar.style.width = (percent < 5 ? 5 : percent) + '%';
                             
-                            const processResponse = await fetch('{{ route('admin.jadwal.zip-process') }}', {
+                            const processResponse = await fetch('{{ route('admin.jadwal.zip-process', [], false) }}', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -260,7 +260,7 @@
                         
                         setTimeout(() => {
                             zipModal.classList.add('hidden');
-                            window.location.href = '{{ route('admin.jadwal.zip-download') }}?file=' + encodeURIComponent(zipFile);
+                            window.location.href = '{{ route('admin.jadwal.zip-download', [], false) }}?file=' + encodeURIComponent(zipFile);
                         }, 1000);
                         
                     } catch (error) {
