@@ -453,6 +453,10 @@ class JadwalSidangController extends Controller
             return back()->with('error', 'Gagal membuat ZIP. Tidak ada jadwal dengan nilai lengkap pada pilihan tersebut.');
         }
 
+        // Tambahan untuk server: bypass batas memory dan waktu eksekusi agar tidak 500 error
+        ini_set('memory_limit', '-1');
+        ini_set('max_execution_time', '300');
+
         // Generate temporary zip file
         $zipFileName = 'Pengumuman_Yudisium_' . ($selectedKelompok ? 'Kelompok_'.$selectedKelompok : 'Semua') . '.zip';
         $zipPath = storage_path('app/' . $zipFileName);
@@ -474,6 +478,9 @@ class JadwalSidangController extends Controller
                     }
                     
                     $zip->addFromString($pdfFileName, $output);
+                    
+                    unset($pdf);
+                    unset($output);
                 }
                 
                 $closeResult = $zip->close();
