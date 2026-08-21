@@ -422,27 +422,34 @@ class JadwalSidangController extends Controller
 
         // Generate temporary zip file
         $zipFileName = 'Pengumuman_Yudisium_' . ($selectedKelompok ? 'Kelompok_'.$selectedKelompok : 'Semua') . '.zip';
-        $zipPath = public_path($zipFileName);
+        $zipPath = storage_path('app/' . $zipFileName);
         
-        $zip = new ZipArchive;
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-            
-            foreach ($jadwalsSiapCetak as $data) {
-                // Generate PDF in memory
-                $pdf = Pdf::loadView('admin.jadwal.cetak-yudisium-pdf', $data);
+        try {
+            $zip = new ZipArchive;
+            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
                 
-                $mhsNama = preg_replace('/[^A-Za-z0-9\-]/', '_', optional($data['jadwal']->mahasiswa)->nama ?? 'Mahasiswa');
-                $mhsNim = optional($data['jadwal']->mahasiswa)->nim ?? '0000';
-                $pdfFileName = $mhsNim . '_' . $mhsNama . '.pdf';
+                foreach ($jadwalsSiapCetak as $data) {
+                    // Generate PDF in memory
+                    $pdf = Pdf::loadView('admin.jadwal.cetak-yudisium-pdf', $data);
+                    
+                    $mhsNama = preg_replace('/[^A-Za-z0-9\-]/', '_', optional($data['jadwal']->mahasiswa)->nama ?? 'Mahasiswa');
+                    $mhsNim = optional($data['jadwal']->mahasiswa)->nim ?? '0000';
+                    $pdfFileName = $mhsNim . '_' . $mhsNama . '.pdf';
+                    
+                    $zip->addFromString($pdfFileName, $pdf->output());
+                }
                 
-                $zip->addFromString($pdfFileName, $pdf->output());
+                $zip->close();
+            } else {
+                return back()->with('error', 'Gagal membuka file ZIP untuk ditulis. Pastikan ekstensi zip aktif.');
             }
-            
-            $zip->close();
-        } else {
-            return back()->with('error', 'Gagal membuat file ZIP.');
-        }
 
-        return response()->download($zipPath)->deleteFileAfterSend(true);
+            return response()->download($zipPath)->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            if (file_exists($zipPath)) {
+                @unlink($zipPath);
+            }
+            return back()->with('error', 'Terjadi kesalahan saat memproses PDF/ZIP: ' . $e->getMessage());
+        }
     }
 }
