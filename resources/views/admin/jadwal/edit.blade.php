@@ -54,20 +54,26 @@
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-2">Dosen Penguji <span class="text-red-500">*</span></label>
-                            <p class="text-xs text-gray-500 mb-3">Pilih satu atau lebih dosen penguji untuk sidang ini.</p>
-                            <div class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-3">Pilih satu atau lebih dosen penguji untuk sidang ini. Urutan pemilihan (klik) menentukan urutan penguji 1, 2, dst.</p>
+                            <div class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 rounded-lg p-3" id="penguji_container">
                                 @foreach($dosens as $dosen)
-                                <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
-                                    <input type="checkbox" name="dosen_ids[]" value="{{ $dosen->id }}"
+                                <label class="flex items-center p-2 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors relative">
+                                    <input type="checkbox" value="{{ $dosen->id }}"
                                         {{ in_array($dosen->id, old('dosen_ids', $selectedPengujiIds ?? [])) ? 'checked' : '' }}
-                                        class="rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 mr-3">
+                                        class="penguji-checkbox rounded border-gray-300 text-emerald-600 focus:ring-emerald-500 mr-3">
                                     <span class="text-sm text-gray-700">{{ $dosen->nama }}</span>
                                     <span class="text-xs text-gray-400 ml-2">{{ $dosen->nidn ?? '' }}</span>
+                                    <span class="penguji-order-badge absolute right-2 text-xs font-bold text-emerald-600" id="badge_penguji_{{ $dosen->id }}"></span>
                                 </label>
                                 @endforeach
                                 @if($dosens->isEmpty())
                                     <p class="text-sm text-gray-400 text-center py-2">Belum ada data dosen. <a href="{{ route('admin.dosen.create') }}" class="text-emerald-600 hover:underline">Tambah dosen</a></p>
                                 @endif
+                            </div>
+                            <div id="hidden_penguji_inputs">
+                                @foreach(old('dosen_ids', $selectedPengujiIds ?? []) as $oldId)
+                                    <input type="hidden" name="dosen_ids[]" value="{{ $oldId }}" id="hidden_penguji_{{ $oldId }}">
+                                @endforeach
                             </div>
                         </div>
                         <div class="flex items-center space-x-3 pt-2">
@@ -79,4 +85,53 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('.penguji-checkbox');
+            const hiddenContainer = document.getElementById('hidden_penguji_inputs');
+
+            function updateBadges() {
+                const hiddenInputs = hiddenContainer.querySelectorAll('input[type="hidden"]');
+                const selectedIds = Array.from(hiddenInputs).map(input => input.value);
+
+                checkboxes.forEach(checkbox => {
+                    const dosenId = checkbox.value;
+                    const badge = document.getElementById('badge_penguji_' + dosenId);
+                    const index = selectedIds.indexOf(dosenId);
+                    
+                    if (index !== -1) {
+                        badge.textContent = 'Penguji ' + (index + 1);
+                    } else {
+                        badge.textContent = '';
+                    }
+                });
+            }
+
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const dosenId = this.value;
+                    if (this.checked) {
+                        if (!document.getElementById('hidden_penguji_' + dosenId)) {
+                            const input = document.createElement('input');
+                            input.type = 'hidden';
+                            input.name = 'dosen_ids[]';
+                            input.value = dosenId;
+                            input.id = 'hidden_penguji_' + dosenId;
+                            hiddenContainer.appendChild(input);
+                        }
+                    } else {
+                        const input = document.getElementById('hidden_penguji_' + dosenId);
+                        if (input) {
+                            input.remove();
+                        }
+                    }
+                    updateBadges();
+                });
+            });
+
+            // Initial badge update for validation errors (old input)
+            updateBadges();
+        });
+    </script>
 </x-app-layout>
