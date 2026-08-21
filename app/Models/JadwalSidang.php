@@ -27,7 +27,7 @@ class JadwalSidang extends Model
 
     public function nilaiSidangs()
     {
-        return $this->hasMany(NilaiSidang::class);
+        return $this->hasMany(NilaiSidang::class)->orderBy('urutan', 'asc')->orderBy('id', 'asc');
     }
 
     public function getNilaiPembimbing()

@@ -72,11 +72,15 @@ class JadwalSidangController extends Controller
         if ($mhs && $mhs->pembimbing_2_id) $dosenIds[] = $mhs->pembimbing_2_id;
         $dosenIds = array_values(array_unique($dosenIds));
 
+        $urutan = 1;
         foreach ($dosenIds as $dosenId) {
-            NilaiSidang::firstOrCreate([
+            NilaiSidang::updateOrCreate([
                 'jadwal_sidang_id' => $jadwal->id,
                 'dosen_id' => $dosenId,
+            ], [
+                'urutan' => $urutan
             ]);
+            $urutan++;
         }
 
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal sidang berhasil dibuat!');
@@ -131,12 +135,16 @@ class JadwalSidangController extends Controller
         // Delete NilaiSidang records for dosens not in the new list
         $jadwal->nilaiSidangs()->whereNotIn('dosen_id', $dosenIds)->delete();
 
-        // Create new ones if they don't exist
+        // Create new ones if they don't exist and update urutan
+        $urutan = 1;
         foreach ($dosenIds as $dosenId) {
-            NilaiSidang::firstOrCreate([
+            NilaiSidang::updateOrCreate([
                 'jadwal_sidang_id' => $jadwal->id,
                 'dosen_id' => $dosenId,
+            ], [
+                'urutan' => $urutan
             ]);
+            $urutan++;
         }
 
         return redirect()->route('admin.jadwal.index')->with('success', 'Jadwal sidang berhasil diperbarui!');
