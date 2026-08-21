@@ -8,6 +8,9 @@ use App\Models\JadwalSidang;
 use App\Models\Mahasiswa;
 use App\Models\NilaiSidang;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
+use ZipArchive;
+use Illuminate\Support\Facades\File;
 
 class JadwalSidangController extends Controller
 {
@@ -349,5 +352,97 @@ class JadwalSidangController extends Controller
         }
 
         return view('admin.jadwal.cetak-yudisium-massal', compact('jadwalsSiapCetak', 'selectedKelompok'));
+    }
+
+    public function cetakYudisiumMassalZip(Request $request)
+    {
+        $selectedKelompok = $request->query('kelompok');
+        
+        $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen'])
+            ->orderBy('kelompok_ujian', 'asc')
+            ->orderBy('waktu_sidang', 'asc');
+
+        if ($selectedKelompok) {
+            $query->where('kelompok_ujian', $selectedKelompok);
+        }
+
+        $semuaJadwals = $query->get();
+        
+        $jadwalsSiapCetak = [];
+        
+        foreach ($semuaJadwals as $jadwal) {
+            if ($jadwal->isNilaiLengkap()) {
+                $ns = $jadwal->getNilaiSidangAkhir();
+                $bobot = JadwalSidang::konversiBobot($ns) ?? 0;
+                $jumlahMutuMhs = floatval(optional($jadwal->mahasiswa)->jumlah_mutu ?? 0);
+                $jumlahSksMhs = floatval(optional($jadwal->mahasiswa)->jumlah_sks ?? 0);
+                $nilaiMutuSidang = $ns !== null ? $bobot * 6 : 0;
+
+                $nilaiAkhirAngka = 0;
+                $mutuAkhirPredikat = '-';
+                $isLulus = false;
+
+                if ($jumlahSksMhs > 0) {
+                    $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
+                    if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
+                        $mutuAkhirPredikat = 'Pujian';
+                    } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
+                        $mutuAkhirPredikat = 'Sangat Memuaskan';
+                    } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
+                        $mutuAkhirPredikat = 'Memuaskan';
+                    } elseif ($nilaiAkhirAngka > 2.0 && $nilaiAkhirAngka <= 2.75) {
+                        $mutuAkhirPredikat = 'Tanpa Predikat Kelulusan';
+                    }
+                    $isLulus = $nilaiAkhirAngka >= 2.0;
+                }
+                
+                $urutan = JadwalSidang::orderBy('kelompok_ujian', 'asc')
+                    ->orderBy('waktu_sidang', 'asc')
+                    ->orderBy('id', 'asc')
+                    ->pluck('id')
+                    ->search($jadwal->id);
+                    
+                $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
+                $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
+                
+                $jadwalsSiapCetak[] = [
+                    'jadwal' => $jadwal,
+                    'nilaiAkhirAngka' => $nilaiAkhirAngka,
+                    'mutuAkhirPredikat' => $mutuAkhirPredikat,
+                    'isLulus' => $isLulus,
+                    'nomorSurat' => $nomorSurat,
+                    'lulusanKe' => $lulusanKe,
+                ];
+            }
+        }
+        
+        if (empty($jadwalsSiapCetak)) {
+            return back()->with('error', 'Gagal membuat ZIP. Tidak ada jadwal dengan nilai lengkap pada pilihan tersebut.');
+        }
+
+        // Generate temporary zip file
+        $zipFileName = 'Pengumuman_Yudisium_' . ($selectedKelompok ? 'Kelompok_'.$selectedKelompok : 'Semua') . '.zip';
+        $zipPath = public_path($zipFileName);
+        
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            
+            foreach ($jadwalsSiapCetak as $data) {
+                // Generate PDF in memory
+                $pdf = Pdf::loadView('admin.jadwal.cetak-yudisium-pdf', $data);
+                
+                $mhsNama = preg_replace('/[^A-Za-z0-9\-]/', '_', optional($data['jadwal']->mahasiswa)->nama ?? 'Mahasiswa');
+                $mhsNim = optional($data['jadwal']->mahasiswa)->nim ?? '0000';
+                $pdfFileName = $mhsNim . '_' . $mhsNama . '.pdf';
+                
+                $zip->addFromString($pdfFileName, $pdf->output());
+            }
+            
+            $zip->close();
+        } else {
+            return back()->with('error', 'Gagal membuat file ZIP.');
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 }
