@@ -288,7 +288,7 @@ class JadwalSidangController extends Controller
             ->search($jadwal->id);
             
         $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
-        $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
+        $lulusanKe = 678 + ($urutan !== false ? $urutan : 0);
 
         return view('admin.jadwal.cetak-yudisium', compact(
             'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus', 'nomorSurat', 'lulusanKe'
@@ -356,7 +356,7 @@ class JadwalSidangController extends Controller
                     ->search($jadwal->id);
                     
                 $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
-                $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
+                $lulusanKe = 678 + ($urutan !== false ? $urutan : 0);
                 
                 $jadwalsSiapCetak[] = [
                     'jadwal' => $jadwal,
@@ -478,7 +478,7 @@ class JadwalSidangController extends Controller
             ->search($jadwal->id);
             
         $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
-        $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
+        $lulusanKe = 678 + ($urutan !== false ? $urutan : 0);
         
         $data = [
             'jadwal' => $jadwal,
