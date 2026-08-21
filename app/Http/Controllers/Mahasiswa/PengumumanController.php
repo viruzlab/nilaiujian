@@ -93,7 +93,7 @@ class PengumumanController extends Controller
             ->search($jadwal->id);
             
         $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
-        $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
+        $lulusanKe = 678 + ($urutan !== false ? $urutan : 0);
 
         return view('mahasiswa.pengumuman.cetak', compact(
             'jadwal', 'nilaiAkhirAngka', 'mutuAkhirPredikat', 'isLulus', 'nomorSurat', 'lulusanKe'
