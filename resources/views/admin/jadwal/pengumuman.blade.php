@@ -19,13 +19,13 @@
                                 </svg>
                                 Cetak PDF (Satu File)
                             </a>
-                            <a href="{{ route('admin.jadwal.cetak-yudisium-massal-zip', ['kelompok' => $selectedKelompok]) }}"
-                                class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-emerald-700 transition-colors shadow-sm font-medium flex items-center whitespace-nowrap">
+                            <button id="btnDownloadZipMassal" data-kelompok="{{ $selectedKelompok }}"
+                                class="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-emerald-700 transition-colors shadow-sm font-medium flex items-center whitespace-nowrap cursor-pointer">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                                 </svg>
                                 Download ZIP
-                            </a>
+                            </button>
                             <input type="text" id="searchInput" placeholder="Cari mahasiswa..." class="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 w-full sm:w-64 transition-shadow">
                         </div>
                     </div>
@@ -152,6 +152,20 @@
         </div>
     </div>
 
+    <!-- Zip Progress Modal -->
+    <div id="zipProgressModal" class="fixed inset-0 z-50 hidden bg-gray-900 bg-opacity-50 flex items-center justify-center">
+        <div class="bg-white rounded-xl shadow-xl w-full max-w-md p-6">
+            <h3 class="text-lg font-bold mb-2">Membuat File ZIP</h3>
+            <p class="text-sm text-gray-600 mb-4" id="zipProgressText">Mohon tunggu, sedang mempersiapkan data...</p>
+            
+            <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
+                <div id="zipProgressBar" class="bg-emerald-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+            
+            <p class="text-xs text-center text-gray-500">Proses ini memakan waktu (sekitar 1-2 detik per mahasiswa) agar server tidak error. Jangan tutup halaman ini.</p>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const searchInput = document.getElementById('searchInput');
@@ -167,6 +181,83 @@
                             row.style.display = 'none';
                         }
                     });
+                });
+            }
+
+            // ZIP Batch Processing Logic
+            const btnDownloadZip = document.getElementById('btnDownloadZipMassal');
+            const zipModal = document.getElementById('zipProgressModal');
+            const zipProgressBar = document.getElementById('zipProgressBar');
+            const zipProgressText = document.getElementById('zipProgressText');
+            
+            if (btnDownloadZip) {
+                btnDownloadZip.addEventListener('click', async function() {
+                    const kelompok = this.getAttribute('data-kelompok');
+                    zipModal.classList.remove('hidden');
+                    
+                    try {
+                        // 1. Initialize
+                        zipProgressText.textContent = 'Menginisialisasi file ZIP...';
+                        zipProgressBar.style.width = '5%';
+                        
+                        const initResponse = await fetch('{{ route('admin.jadwal.zip-init') }}', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            },
+                            body: JSON.stringify({ kelompok: kelompok })
+                        });
+                        
+                        const initData = await initResponse.json();
+                        if (!initData.success) {
+                            alert(initData.message);
+                            zipModal.classList.add('hidden');
+                            return;
+                        }
+                        
+                        const zipFile = initData.zip_file;
+                        const jadwalIds = initData.jadwal_ids;
+                        const total = initData.total;
+                        
+                        // 2. Process each PDF
+                        for (let i = 0; i < total; i++) {
+                            zipProgressText.textContent = `Membuat PDF ${i + 1} dari ${total}...`;
+                            const percent = Math.round(((i) / total) * 100);
+                            zipProgressBar.style.width = (percent < 5 ? 5 : percent) + '%';
+                            
+                            const processResponse = await fetch('{{ route('admin.jadwal.zip-process') }}', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    zip_file: zipFile,
+                                    jadwal_id: jadwalIds[i]
+                                })
+                            });
+                            
+                            const processData = await processResponse.json();
+                            if (!processData.success) {
+                                console.error('Error proses PDF ID ' + jadwalIds[i] + ':', processData.message);
+                            }
+                        }
+                        
+                        // 3. Download Final ZIP
+                        zipProgressText.textContent = 'Selesai! Mengunduh file ZIP...';
+                        zipProgressBar.style.width = '100%';
+                        
+                        setTimeout(() => {
+                            zipModal.classList.add('hidden');
+                            window.location.href = '{{ route('admin.jadwal.zip-download') }}?file=' + encodeURIComponent(zipFile);
+                        }, 1000);
+                        
+                    } catch (error) {
+                        alert('Terjadi kesalahan koneksi saat memproses ZIP.');
+                        zipModal.classList.add('hidden');
+                        console.error(error);
+                    }
                 });
             }
         });

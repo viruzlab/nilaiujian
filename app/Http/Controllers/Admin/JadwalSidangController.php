@@ -376,9 +376,9 @@ class JadwalSidangController extends Controller
         return view('admin.jadwal.cetak-yudisium-massal', compact('jadwalsSiapCetak', 'selectedKelompok'));
     }
 
-    public function cetakYudisiumMassalZip(Request $request)
+    public function initZip(Request $request)
     {
-        $selectedKelompok = $request->query('kelompok');
+        $selectedKelompok = $request->input('kelompok');
         
         $query = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen'])
             ->orderBy('kelompok_ujian', 'asc')
@@ -389,118 +389,138 @@ class JadwalSidangController extends Controller
         }
 
         $semuaJadwals = $query->get();
-        
-        $jadwalsSiapCetak = [];
+        $jadwalIds = [];
         
         foreach ($semuaJadwals as $jadwal) {
             if ($jadwal->isNilaiLengkap()) {
-                $ns = $jadwal->getNilaiSidangAkhir();
-                $bobot = JadwalSidang::konversiBobot($ns) ?? 0;
-                $jumlahMutuMhs = floatval(optional($jadwal->mahasiswa)->jumlah_mutu ?? 0);
-                $jumlahSksMhs = floatval(optional($jadwal->mahasiswa)->jumlah_sks ?? 0);
-                $nilaiMutuSidang = $ns !== null ? $bobot * 6 : 0;
-
-                $nilaiAkhirAngka = 0;
-                $mutuAkhirPredikat = '-';
-                $isLulus = false;
-
-                if ($jumlahSksMhs > 0) {
-                    $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
-                    if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
-                        $mhs = $jadwal->mahasiswa;
-                        $semester = $mhs ? $mhs->semester : null;
-                        $mataKuliahUlang = $mhs ? (bool) $mhs->mata_kuliah_ulang : false;
-                        $nilaiSidangAngka = floatval($ns);
-
-                        $syaratSemester = ($semester === null || $semester <= 8);
-                        
-                        if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
-                            $mutuAkhirPredikat = 'Pujian/Cum Laude';
-                        } else {
-                            $mutuAkhirPredikat = 'Sangat Memuaskan';
-                        }
-                    } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
-                        $mutuAkhirPredikat = 'Sangat Memuaskan';
-                    } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
-                        $mutuAkhirPredikat = 'Memuaskan';
-                    } elseif ($nilaiAkhirAngka > 2.0 && $nilaiAkhirAngka <= 2.75) {
-                        $mutuAkhirPredikat = 'Tanpa Predikat Kelulusan';
-                    }
-                    $isLulus = $nilaiAkhirAngka >= 2.0;
-                }
-                
-                $urutan = JadwalSidang::orderBy('kelompok_ujian', 'asc')
-                    ->orderBy('waktu_sidang', 'asc')
-                    ->orderBy('id', 'asc')
-                    ->pluck('id')
-                    ->search($jadwal->id);
-                    
-                $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
-                $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
-                
-                $jadwalsSiapCetak[] = [
-                    'jadwal' => $jadwal,
-                    'nilaiAkhirAngka' => $nilaiAkhirAngka,
-                    'mutuAkhirPredikat' => $mutuAkhirPredikat,
-                    'isLulus' => $isLulus,
-                    'nomorSurat' => $nomorSurat,
-                    'lulusanKe' => $lulusanKe,
-                ];
+                $jadwalIds[] = $jadwal->id;
             }
         }
         
-        if (empty($jadwalsSiapCetak)) {
-            return back()->with('error', 'Gagal membuat ZIP. Tidak ada jadwal dengan nilai lengkap pada pilihan tersebut.');
+        if (empty($jadwalIds)) {
+            return response()->json(['success' => false, 'message' => 'Tidak ada jadwal dengan nilai lengkap pada pilihan tersebut.']);
         }
 
-        // Tambahan untuk server: bypass batas memory dan waktu eksekusi agar tidak 500 error
-        ini_set('memory_limit', '-1');
-        ini_set('max_execution_time', '300');
-
-        // Generate temporary zip file
-        $zipFileName = 'Pengumuman_Yudisium_' . ($selectedKelompok ? 'Kelompok_'.$selectedKelompok : 'Semua') . '.zip';
+        $zipFileName = 'Pengumuman_Yudisium_' . ($selectedKelompok ? 'Kelompok_'.$selectedKelompok : 'Semua') . '_' . time() . '.zip';
         $zipPath = storage_path('app/' . $zipFileName);
         
-        try {
-            $zip = new ZipArchive;
-            if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
-                
-                foreach ($jadwalsSiapCetak as $data) {
-                    // Generate PDF in memory
-                    $pdf = Pdf::loadView('admin.jadwal.cetak-yudisium-pdf', $data);
-                    
-                    $mhsNama = preg_replace('/[^A-Za-z0-9\-]/', '_', optional($data['jadwal']->mahasiswa)->nama ?? 'Mahasiswa');
-                    $mhsNim = optional($data['jadwal']->mahasiswa)->nim ?? '0000';
-                    $pdfFileName = $mhsNim . '_' . $mhsNama . '.pdf';
-                    $output = $pdf->output();
-                    if (empty($output)) {
-                        return back()->with('error', 'Gagal memproses PDF untuk mahasiswa: ' . $mhsNama . '. Modul PDF mungkin bermasalah (coba cek logo/gambar).');
-                    }
-                    
-                    $zip->addFromString($pdfFileName, $output);
-                    
-                    unset($pdf);
-                    unset($output);
-                }
-                
-                $closeResult = $zip->close();
-                if (!$closeResult) {
-                    return back()->with('error', 'Gagal menyimpan file ZIP di server. Izin folder tidak mencukupi.');
-                }
-            } else {
-                return back()->with('error', 'Gagal membuka file ZIP untuk ditulis. Pastikan ekstensi zip aktif.');
-            }
-
-            while (ob_get_level() > 0) {
-                ob_end_clean();
-            }
-
-            return response()->download($zipPath);
-        } catch (\Throwable $e) {
-            if (isset($zipPath) && file_exists($zipPath)) {
-                @unlink($zipPath);
-            }
-            return back()->with('error', 'Terjadi kesalahan saat memproses PDF/ZIP: ' . $e->getMessage());
+        // Buat file ZIP kosong
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === TRUE) {
+            $zip->addFromString('README.txt', 'File PDF Yudisium hasil generate sistem.');
+            $zip->close();
+            
+            return response()->json([
+                'success' => true,
+                'zip_file' => $zipFileName,
+                'jadwal_ids' => $jadwalIds,
+                'total' => count($jadwalIds)
+            ]);
         }
+        
+        return response()->json(['success' => false, 'message' => 'Gagal membuat file ZIP di server.']);
+    }
+
+    public function processZip(Request $request)
+    {
+        $jadwalId = $request->input('jadwal_id');
+        $zipFileName = $request->input('zip_file');
+        $zipPath = storage_path('app/' . $zipFileName);
+        
+        if (!file_exists($zipPath)) {
+            return response()->json(['success' => false, 'message' => 'File ZIP tidak ditemukan.']);
+        }
+        
+        $jadwal = JadwalSidang::with(['mahasiswa.pembimbing1', 'mahasiswa.pembimbing2', 'nilaiSidangs.dosen'])->find($jadwalId);
+        
+        if (!$jadwal || !$jadwal->isNilaiLengkap()) {
+            return response()->json(['success' => true, 'message' => 'Diabaikan (tidak valid)']);
+        }
+        
+        // Kalkulasi
+        $ns = $jadwal->getNilaiSidangAkhir();
+        $bobot = JadwalSidang::konversiBobot($ns) ?? 0;
+        $jumlahMutuMhs = floatval(optional($jadwal->mahasiswa)->jumlah_mutu ?? 0);
+        $jumlahSksMhs = floatval(optional($jadwal->mahasiswa)->jumlah_sks ?? 0);
+        $nilaiMutuSidang = $ns !== null ? $bobot * 6 : 0;
+
+        $nilaiAkhirAngka = 0;
+        $mutuAkhirPredikat = '-';
+        $isLulus = false;
+
+        if ($jumlahSksMhs > 0) {
+            $nilaiAkhirAngka = ($nilaiMutuSidang + $jumlahMutuMhs) / $jumlahSksMhs;
+            if ($nilaiAkhirAngka > 3.5 && $nilaiAkhirAngka <= 4) {
+                $mhs = $jadwal->mahasiswa;
+                $semester = $mhs ? $mhs->semester : null;
+                $mataKuliahUlang = $mhs ? (bool) $mhs->mata_kuliah_ulang : false;
+                $nilaiSidangAngka = floatval($ns);
+                $syaratSemester = ($semester === null || $semester <= 8);
+                if ($syaratSemester && !$mataKuliahUlang && $nilaiSidangAngka >= 82) {
+                    $mutuAkhirPredikat = 'Pujian/Cum Laude';
+                } else {
+                    $mutuAkhirPredikat = 'Sangat Memuaskan';
+                }
+            } elseif ($nilaiAkhirAngka > 3.0 && $nilaiAkhirAngka <= 3.5) {
+                $mutuAkhirPredikat = 'Sangat Memuaskan';
+            } elseif ($nilaiAkhirAngka > 2.75 && $nilaiAkhirAngka <= 3.0) {
+                $mutuAkhirPredikat = 'Memuaskan';
+            } elseif ($nilaiAkhirAngka > 2.0 && $nilaiAkhirAngka <= 2.75) {
+                $mutuAkhirPredikat = 'Tanpa Predikat Kelulusan';
+            }
+            $isLulus = $nilaiAkhirAngka >= 2.0;
+        }
+        
+        $urutan = JadwalSidang::orderBy('kelompok_ujian', 'asc')
+            ->orderBy('waktu_sidang', 'asc')
+            ->orderBy('id', 'asc')
+            ->pluck('id')
+            ->search($jadwal->id);
+            
+        $nomorSurat = 355 + ($urutan !== false ? $urutan : 0);
+        $lulusanKe = 655 + ($urutan !== false ? $urutan : 0);
+        
+        $data = [
+            'jadwal' => $jadwal,
+            'nilaiAkhirAngka' => $nilaiAkhirAngka,
+            'mutuAkhirPredikat' => $mutuAkhirPredikat,
+            'isLulus' => $isLulus,
+            'nomorSurat' => $nomorSurat,
+            'lulusanKe' => $lulusanKe,
+        ];
+        
+        // Set memory limit
+        ini_set('memory_limit', '512M');
+        $pdf = Pdf::loadView('admin.jadwal.cetak-yudisium-pdf', $data);
+        
+        $mhsNama = preg_replace('/[^A-Za-z0-9\-]/', '_', optional($jadwal->mahasiswa)->nama ?? 'Mahasiswa');
+        $mhsNim = optional($jadwal->mahasiswa)->nim ?? '0000';
+        $pdfFileName = $mhsNim . '_' . $mhsNama . '.pdf';
+        $output = $pdf->output();
+        
+        if (empty($output)) {
+            return response()->json(['success' => false, 'message' => 'Gagal generate PDF']);
+        }
+        
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath) === TRUE) {
+            $zip->addFromString($pdfFileName, $output);
+            $zip->close();
+            return response()->json(['success' => true]);
+        }
+        
+        return response()->json(['success' => false, 'message' => 'Gagal memasukkan file ke ZIP']);
+    }
+
+    public function downloadZip(Request $request)
+    {
+        $zipFileName = $request->query('file');
+        $zipPath = storage_path('app/' . $zipFileName);
+        
+        if (!file_exists($zipPath)) {
+            return back()->with('error', 'File ZIP tidak ditemukan atau sudah kadaluarsa.');
+        }
+        
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 }
